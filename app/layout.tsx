@@ -7,11 +7,11 @@ const anton = Anton({ variable: "--font-anton", weight: "400", subsets: ["latin"
 const serif = Instrument_Serif({ variable: "--font-serif", weight: "400", subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  title: "Hackathon Starter",
-  description: "Prebuilt components: landing, store, dashboards, auth.",
+  title: "Inbox to Plan",
+  description: "Turns an event inbox into a valid, budgeted plan.",
 };
 
-export default function RootLayout({ children }: LayoutProps<"/">) {
+export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en" className={`${inter.variable} ${anton.variable} ${serif.variable} h-full antialiased`}>
       <body className="min-h-full flex flex-col">{children}</body>
