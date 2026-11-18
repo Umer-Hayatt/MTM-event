@@ -1,83 +1,82 @@
-# Inbox → Plan: design
+# Convene design system
 
-An event organiser's inbox is a mess of emails, WhatsApp texts and notices, in English and in Roman Urdu. This system reads that inbox and produces a **valid, budgeted event plan**, and it shows where each figure came from. When a new message arrives, it updates only what changed. A message that would break the plan is rejected, and the reason is printed.
+This document covers the landing page (`/`) and the tokens it introduced. The workspace (`/app`) still uses the previous styling (forest green, lime, Geist-era look) and will be migrated to these tokens in a second pass. Only the global font changed for the workspace (DM Sans now replaces Geist).
 
-**The core idea:** the model only reads, and plain code does the deciding.
+Principle: the page should look like the product. Calm, precise, auditable. Real photography, real product content, tabular numbers, no decoration without meaning.
 
-## One command
+## Colors
 
-```
-node plan.ts <file>
-```
+Four colors. Tints come from opacity or mixing these, nothing else.
 
-- **Fresh run:** no saved state, or the file holds 3 or more messages. Old state is archived to `state/archive/<ts>/`.
-- **Update:** the file holds 1 or 2 messages and state exists. The new facts are merged and the plan is re-solved.
-- The first trace line prints the mode and the reason.
-- Messages the system has already seen (matched by text hash) are skipped and cost 0 calls.
-- Outputs go to `out/plan.md`, `out/plan.json` and `out/trace.txt`. The trace accumulates over a session, and call numbers continue between runs.
-- The web UI (`npm run dev`) calls **the same `run()` function**. There is no second code path.
+| Token | Hex | Role |
+| --- | --- | --- |
+| `--ink` | `#071B2B` | Wordmark, all headings, all small text, dark sections |
+| `--teal` | `#167D8D` | Primary buttons, large numbers, chart strokes, ring arcs, links with underline |
+| `--mist` | `#B9E4E8` | Tinted panels, badges, highlights, ring tracks, section washes |
+| `--paper` | `#EEEEEE` | Page background, light text on dark |
 
-## Pipeline (`lib/planner/`)
+Semantic status color, used only inside product mockups: `--status-rejected` `#B4432F` (Rejected pill). Accepted uses Teal.
 
-| Part | File | Why it exists | What breaks without it |
-|---|---|---|---|
-| Splitter | `split.ts` | Cuts the file into messages on structural markers such as numbering, `From:` lines and separators. Blank lines don't count, because one email can have several paragraphs. | Messages get merged or cut apart, and facts get attached to the wrong sender. |
-| LLM port | `llm.ts` | One `fetch` to an OpenAI-compatible API. Groq `llama-3.1-8b-instant` is the main model. Cerebras `llama3.1-8b` is used only if Groq fails. Uses JSON mode, temperature 0 and a 20 s timeout. | We would be tied to one provider, with no fallback and no honest token counts. |
-| Trace | `trace.ts` | Numbers every model call and records the model, the area tag, the input, the output and the token counts the API reports. Failed calls and retries are logged too. Ends with the total tokens. | The brief's requirement 3 fails, and we would be disqualified for misreporting. |
-| Reader | `reader.ts` | The **only** language step. It turns messages into facts, constraints and requests in a fixed schema checked by zod. One call reads the whole pack. An update makes one call. If the output fails validation, there is one repair retry. | Code cannot understand Roman Urdu or messy wording. |
-| Ledger | `ledger.ts` | Decides for each message whether to **accept / stale / ignore / reject**. It checks relevance, then date, then ownership, then re-solves and validates. | Old prices win, or a wrong message corrupts the plan. |
-| Policy | `policy.ts` | Holds every product rule in one place, such as who owns which facts, how options are ranked and how long the opening lasts. Each rule is printed in the trace when it is applied. | Rules end up scattered and hidden, and a judge can't audit them. |
-| Solver | `solver.ts` | Lists every **hall × food tier × subset of optional requests**, drops the combinations that break a hard constraint or the budget, and ranks the rest. | Greedy picks miss the valid plans, and over-budget plans get through. |
-| Schedule | `schedule.ts` | Builds the timeline as relative times (T+0:00). It uses clock times only if a message gives a start time. | The schedule isn't valid, or it invents facts. |
-| Validator | `validator.ts` | Runs the judges' six checks plus every hard constraint taken from the messages. | We could print an invalid plan without noticing. |
-| Run | `run.ts` | Wires the steps together and loads and saves state. The CLI and the API both call this. | The CLI and UI would drift apart. |
+Tailwind theme names: `ink`, `teal`, `mist`, `paper`, `rejected`. The workspace's old dark surface utility was renamed `ws-ink` so the names do not collide.
 
-## What the model returns (reader schema)
+Distribution on the landing page: Paper page, photo hero with Paper to transparent grade, Ink audit band, Teal CTA band, Mist wash behind "How it works", bento and cards alternating Mist, Ink, Teal and white.
 
-The model returns one entry per message. Code assigns each message its id, and the model echoes it back:
+Contrast rules:
+- Teal on Paper is about 4.2:1. Never use Teal for small body text on Paper. Small text is Ink.
+- White on Teal passes and is used for buttons and the CTA band.
+- On Ink and over photos use Paper or Mist text. Fix legibility with the scrim, never by changing the type color.
+- Measured over the hero photo: worst-case Ink contrast 6.5:1 at 1440 wide, 10.5:1 at 390.
 
-`{ id, sender_role, date|null, relevant, facts[], constraints[], requests[] }`
+## Typography
 
-- **sender_role** is one of: `authority`, `venue`, `caterer`, `finance`, `judging_coordinator`, `participant`, `unknown`.
-- Each **fact** has the shape `{ key, subject?, action: set|add|remove, value, unit? }`. The model does no arithmetic. Code applies `add` and `remove`.
-  - The `event.*` keys are `students`, `teams`, `team_size`, `duration_min`, `start_time`, `end_by` and `budget`.
-  - `people.group` holds an on-site group: the subject is the group name and the value is its head count.
-  - `venue.option` and `food.option` hold an option: the subject is its name and the value is `{ price, seats?, attrs[] }`.
-  - The `judge.*` keys are `confirmed`, `fee`, `min_per_team` and `max_teams`.
-  - `spent.item` records money already spent. `cost.required` records a cost that must be paid. `schedule.break` records a break, given in minutes.
-  - The **derived** keys `food.boxes`, `judges.count`, `venue.capacity` and `total.cost` are computed by code. A message that tries to set one of them is always rejected.
-- Each **constraint** has the shape `{ area, target, op, value, hard }`, where `op` is one of `== != < <= > >= has`. Targets come from a registry of values that code can compute. A target that isn't in the registry is reported as **unhandled** in the trace and the UI. It is never ignored silently.
-- Each **request** has the shape `{ area, item, cost }`. Requests are always soft. The DJ is an example.
+Loaded with `next/font/google`, `display: swap`, in `app/layout.tsx`.
 
-All money is in whole PKR, all durations in minutes, and all times in 24-hour format. The model normalises the numbers it reads (lakh, commas, Roman Urdu).
+| Use | Font | Weight |
+| --- | --- | --- |
+| Wordmark, hero heading, section headings | Libre Baskerville | 700 |
+| Subheadings, buttons | DM Sans | 600 |
+| Body | DM Sans | 400 |
+| Navigation, labels, numbers, tables | DM Sans | 500 |
 
-## Accept or reject (checks run in this order)
+Numbers and tables use `font-variant-numeric: tabular-nums` (`.tnum`). Hero heading: `clamp(2.75rem, 6.2vw, 5.75rem)`, leading 0.98, tracking -0.025em. Baskerville headings are sentence case, never all caps. No other weights or fonts.
 
-1. **Not relevant?** The message is ignored and logged. Example: a judge saying they'll be 10 minutes late.
-2. **Older than the current fact?** The message is stale, and the newer fact stays. Example: the 20 Oct price loses to the 12 Nov price.
-3. **Does the sender's role own this fact?** If not, the message is rejected. Owners are roles, not names, and the ownership map is policy. An unknown sender owns nothing. Derived values have no owner at all.
-4. **Re-solve and validate.** If a rule breaks or no valid plan exists, the message is rejected with the exact rule, and the last valid plan is kept.
-5. Otherwise the message is **accepted**. The plan is re-solved and the change is logged.
+## Shape, space, shadow, motion
 
-Messages are accepted or rejected as a whole. The `authority` role outranks everyone else. When a sender changes a fact it owns, the plan is re-solved; the message is not rejected.
+- Radius scale: 10px small (chips, inner rows), 20px cards, 32px large panels, full pills for tags and buttons. Do not mix.
+- 8px spacing scale. Section padding 96px (128px at md and up). Max content width 1240px; the hero panel is 1392px and inset 24px from the page edge, full bleed on mobile.
+- One shadow for floating cards: soft, Ink-tinted, low opacity (`--shadow-float`). No glow, no neon, no colored shadows.
+- Motion is subtle: staggered rise on load (`.rise`), budget ring and bars animate once (`.ring-draw`, `.grow-x`), cards lift 4px on hover (`.lift`). All of it is disabled under `prefers-reduced-motion`. No parallax, no looping.
 
-## Policies (`policy.ts`, printed in the trace when applied)
+## Photography
 
-- **Headcount** = every on-site group, with judges counted as *needed*, not *confirmed*.
-- **Judges needed** = ⌈teams ÷ max teams per judge⌉. The validator checks that confirmed ≥ needed. Judges paid = judges needed.
-- **Venue** must seat the full headcount. Nice-to-haves only break ties, unless a message turns them into a constraint.
-- **Ranking**: the highest food tier comes first, then the most optional requests, then the lowest cost, then the most capacity.
-- **Schedule**: opening 10 min, then build, then the required breaks, then lunch 30 min, then build, then judging, then closing 15 min.
-  - Judging takes max teams per judge × minutes per team, with all judges working in parallel.
-  - Build time absorbs whatever time is left, and must be at least 50% of the event.
-  - If any of these rules can't be met, the plan is reported as infeasible.
+Real photographs only, from Unsplash under the Unsplash License. Credits live in `public/images/CREDITS.md` and the footer.
 
-## Updates and the change prediction
+- Hero: wide, calm, documentary, real event setting (an empty auditorium), uncluttered upper left, no readable signs, logos or text, no dominant faces. Used at 2400px wide.
+- Tile: a closer detail in the same family (hands, notebook, laptop). Portrait.
+- Never use photos of people as team members, customers or testimonials. No AI imagery.
+- Treatment, applied in CSS so the file stays a clean photograph: `saturate(0.8)`, a Teal layer at 25% with multiply, an Ink layer at 10%, and a Paper gradient from the left (from the top on mobile) so the Ink headline stays legible. Not a flat duotone.
+- Delivery: `next/image`, explicit `sizes`, blur placeholder, `priority` on the hero only.
 
-An update is **1 `reading` call**. If a message brings a kind of constraint the registry can't express, the update makes **1 more call, tagged with that constraint's area**. The rule for the prediction slip: *"reading only, plus area X if the message introduces a new kind of constraint for X."*
+## Components (`components/landing/`)
 
-## Roadmap (product, after the MVP)
+`nav` (sticky, transparent then Paper blur on scroll, drawer on mobile), `hero`, `product-cluster` (plan card with budget ring, message card, rejected card, trace chip, scroll ring), `bento-stats`, `problem`, `how-it-works`, `audit-band`, `sample-plan`, `cta-band`, `footer`, plus `ui` (wordmark and mark, pills, message chips, ring, arrows, `SAMPLE` data) and `blur` (generated placeholders).
 
-- An organiser can override a rejected message, through an approval queue with a decision log.
-- Several events per account, with a database instead of a JSON file.
-- Messages arrive directly from email and WhatsApp.
+All product visuals are HTML, CSS and SVG. Sample figures come from `samples/sample_pack.txt` (177 people, Hall A, Rs 597,400 of Rs 650,000, 17 judges, 6 checks) and are always labeled "Sample plan" or "Sample". The trace token counts other than "Call 1 · 2,413" are illustrative.
+
+## Voice
+
+Plain, specific, honest. State what the product does and show it. Sentence case. No em dashes, no exclamation marks in copy, no buzzwords.
+
+## Ban list
+
+- Purple, indigo or blue-violet gradients, gradient text, glow blobs, glassmorphism as a default, neon or colored shadows.
+- Emoji. Icon-in-tinted-square feature tiles. Identical three-column icon grids as the main structure.
+- AI-generated images, cartoon illustrations, fake dashboard screenshots, fake avatars, logos, testimonials, ratings or user counts.
+- Generic corporate stock photography.
+- "Supercharge", "seamless", "revolutionize", "unlock", "empower", "next-gen", "AI-powered" as a headline.
+- Centered-everything layouts, uniform spacing without hierarchy, every card the same size, decoration with no meaning.
+- Stock component-library looks. Everything is composed from the tokens above.
+
+## Next step
+
+Restyle the workspace screens (`app/app/page.tsx`, `components/*`) with these tokens, then retire the old `--accent`, `--highlight`, `--background` family in `app/globals.css`.
