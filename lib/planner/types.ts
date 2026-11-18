@@ -1,6 +1,6 @@
 // Shared shapes for the planner. Pure types: no logic, no facts.
 
-export type Role = "authority" | "venue" | "caterer" | "finance" | "judging_coordinator" | "participant" | "unknown";
+export type Role = "authority" | "venue" | "caterer" | "finance" | "judging_coordinator" | "participant" | "unknown" | "organiser";
 export type Area = "reading" | "venue" | "schedule" | "food" | "judging" | "budget";
 
 /** One raw message as cut from the input file. `seq` is arrival order across the whole session. */
@@ -34,7 +34,17 @@ export type MessageRecord = RawMessage & {
   reason?: string;
 };
 
-export type Option = { name: string; price: number; seats?: number; attrs: string[]; source: number };
+export type Option = { name: string; price: number; seats?: number; attrs: string[]; source: number; tba?: boolean };
+
+/** A missing fact the organiser can answer, mark TBA, or ignore (human in the loop). */
+export type Gap = {
+  key: string;
+  question: string;
+  kind: "number" | "time" | "text";
+  blocks: string[];
+  status: "open" | "answered" | "tba" | "ignored";
+  value?: unknown;
+};
 
 /** Current world after folding every accepted message (ledger.ts). */
 export type FactState = {
@@ -62,7 +72,9 @@ export type Plan = {
   schedule: { blocks: Block[]; lengthMin: number; relative: boolean; notes: string[] };
   budget: { cap: number; lines: { label: string; amount: number; source?: number }[]; total: number; remaining: number };
   extras: { item: string; cost: number; included: boolean; why: string }[];
-  checks: { name: string; ok: boolean; detail: string }[];
+  checks: { name: string; ok: boolean; detail: string; pending?: boolean }[];
+  /** Plan sections shown as "TBA" because a fact is missing. */
+  tba: string[];
   unhandled: string[];
   ranking: string;
 };
