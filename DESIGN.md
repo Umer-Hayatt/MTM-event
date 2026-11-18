@@ -19,13 +19,13 @@ Semantic status color, used only inside product mockups: `--status-rejected` `#B
 
 Tailwind theme names: `ink`, `teal`, `mist`, `paper`, `rejected`. The workspace's old dark surface utility was renamed `ws-ink` so the names do not collide.
 
-Distribution on the landing page: Paper page, photo hero with Paper to transparent grade, Ink audit band, Teal CTA band, Mist wash behind "How it works", bento and cards alternating Mist, Ink, Teal and white.
+Distribution on the landing page: Paper page and nav, deep blue hero panel (Ink to Teal), Ink audit band, Teal CTA band, Mist wash behind "How it works", bento and cards alternating Mist, Ink, Teal and white.
 
 Contrast rules:
 - Teal on Paper is about 4.2:1. Never use Teal for small body text on Paper. Small text is Ink.
 - White on Teal passes and is used for buttons and the CTA band.
 - On Ink and over photos use Paper or Mist text. Fix legibility with the scrim, never by changing the type color.
-- Measured over the hero photo: worst-case Ink contrast 6.5:1 at 1440 wide, 10.5:1 at 390.
+- Hero text is Paper (heading), Mist (subline, tagline). Measured at the brightest pixel behind each text box: at least 8:1 at 390, 768 and 1024, and 9:1 at 1280 and 1440. Fix legibility with the gradient stops and photo mask, never the text color.
 
 ## Typography
 
@@ -51,11 +51,26 @@ Numbers and tables use `font-variant-numeric: tabular-nums` (`.tnum`). Hero head
 
 Real photographs only, from Unsplash under the Unsplash License. Credits live in `public/images/CREDITS.md` and the footer.
 
-- Hero: wide, calm, documentary, real event setting (an empty auditorium), uncluttered upper left, no readable signs, logos or text, no dominant faces. Used at 2400px wide.
+- Hero: wide, calm, documentary, real event setting (an empty auditorium), no readable signs, logos or text, no dominant faces. Used at 2400px wide.
 - Tile: a closer detail in the same family (hands, notebook, laptop). Portrait.
 - Never use photos of people as team members, customers or testimonials. No AI imagery.
-- Treatment, applied in CSS so the file stays a clean photograph: `saturate(0.8)`, a Teal layer at 25% with multiply, an Ink layer at 10%, and a Paper gradient from the left (from the top on mobile) so the Ink headline stays legible. Not a flat duotone.
+- Treatment, applied in CSS so the file stays a clean photograph: `saturate(0.35)`, a Teal layer at 85% with `mix-blend-mode: color`, then an Ink layer at 15% with multiply. It reads blue but keeps full tonal detail, so it is still a photograph and not a flat duotone.
+- Placement: right side of the hero panel on desktop (66% wide), lower half on mobile. A mask fades its inner edge (transparent for the first 30%, full strength by 74%) so the photo dissolves into the gradient and never sits behind the headline.
 - Delivery: `next/image`, explicit `sizes`, blur placeholder, `priority` on the hero only.
+
+## Hero
+
+The hero panel (32px radius, inset 24px from the page edge, full bleed on mobile) is a deep blue surface: `linear-gradient(100deg, Ink 0 to 34%, Teal 100%)` on desktop, a vertical Ink to Teal gradient on mobile (`.hero-surface`). The nav stays on Paper above it.
+
+- Depth: a few Mist hairline arcs and contour lines at 6 to 11% opacity behind the cards (inline SVG in `hero.tsx`). No glow, no blur orbs, no neon.
+- Type: label pill "Inbox → Plan" (Mist background, Ink text), H1 "Messages in. Plan out." in Paper on two lines (`clamp(2.75rem, 5.8vw, 5.25rem)`), subline in Mist, tagline in Mist.
+- Buttons: primary is Paper with Ink text (strongest contrast on the blue), secondary is outlined Mist with Paper text.
+- Cards: plan, message and rejected cards stay white so they pop. Each shows a small "Sample" or "Sample plan" label. The trace chip sits in the gap above the message card (stacked below the cards under 1280px) and must never overlap the ring, numbers or card text; check at 1440, 1280, 1024, 768 and 390.
+- Nav: desktop links from 1024px up, hamburger drawer below.
+
+## Footer
+
+One row of anchor links (Product, How it works, Audit, Sample plan) and a photo credits line under a hairline, on Ink. No wordmark, no description, no buttons. Sample data is labeled where it appears (hero cards, bento chart, sample plan section) rather than in the footer.
 
 ## Components (`components/landing/`)
 
