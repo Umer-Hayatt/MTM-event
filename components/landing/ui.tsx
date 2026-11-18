@@ -60,12 +60,12 @@ export function Check({ className = "size-4" }: { className?: string }) {
 }
 
 /** Budget ring. value is 0..1. Animates once. */
-export function Ring({ value, size = 132, stroke = 12, track = "var(--mist)", arc = "var(--teal)", children, label }: {
-  value: number; size?: number; stroke?: number; track?: string; arc?: string; children?: ReactNode; label: string;
+export function Ring({ value, size = 132, stroke = 12, track = "var(--mist)", arc = "var(--teal)", children, label, drawDelay = 300 }: {
+  value: number; size?: number; stroke?: number; track?: string; arc?: string; children?: ReactNode; label: string; drawDelay?: number;
 }) {
   const r = (size - stroke) / 2;
   const len = 2 * Math.PI * r;
-  const style = { "--ring-len": len, "--ring-off": len * (1 - value) } as CSSProperties;
+  const style = { "--ring-len": len, "--ring-off": len * (1 - value), "--ring-delay": `${drawDelay}ms` } as CSSProperties;
   return (
     <div className="relative" style={{ width: size, height: size }}>
       <svg viewBox={`0 0 ${size} ${size}`} width={size} height={size} role="img" aria-label={label} className="-rotate-90">

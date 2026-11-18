@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { useEffect, useState } from "react";
+import { Reveal } from "./reveal";
 import { Wordmark, wrap } from "./ui";
 
 const links = [
@@ -30,7 +31,7 @@ export function Nav() {
 
   return (
     <header className={`sticky top-0 z-50 transition-colors duration-300 ${scrolled || open ? "bg-paper/85 backdrop-blur-md" : "bg-transparent"}`}>
-      <div className="mx-auto flex h-[72px] w-full max-w-[1440px] items-center justify-between px-5 md:px-[72px] min-[1440px]:px-[72px]">
+      <Reveal y={0} className="mx-auto flex h-[72px] w-full max-w-[1440px] items-center justify-between px-5 md:px-[72px] min-[1440px]:px-[72px]">
         <Link href="/" aria-label="Convene home" className="text-ink">
           <Wordmark />
         </Link>
@@ -44,7 +45,7 @@ export function Nav() {
         </nav>
 
         <div className="flex items-center gap-3">
-          <Link href="/app" className="hidden rounded-full bg-teal px-5 py-2.5 text-sm font-semibold text-white transition hover:bg-ink sm:inline-flex">
+          <Link href="/app" className="btn-lift hidden rounded-full bg-teal px-5 py-2.5 text-sm font-semibold text-white hover:bg-ink sm:inline-flex">
             Open workspace
           </Link>
           <button
@@ -60,7 +61,7 @@ export function Nav() {
             </svg>
           </button>
         </div>
-      </div>
+      </Reveal>
 
       {open && (
         <div id="mobile-menu" className="border-t border-ink/10 bg-paper lg:hidden">

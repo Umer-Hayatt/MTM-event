@@ -93,16 +93,42 @@ body {
 }
 
 /* ---------------- Landing motion ---------------- */
-@keyframes rise { from { opacity: 0; transform: translateY(16px); } to { opacity: 1; transform: none; } }
-.rise { animation: rise 0.7s cubic-bezier(0.22, 1, 0.36, 1) backwards; animation-delay: calc(var(--i, 0) * 90ms); }
-@keyframes grow-x { from { transform: scaleX(0); } to { transform: scaleX(1); } }
-.grow-x { transform-origin: left; animation: grow-x 1.1s cubic-bezier(0.22, 1, 0.36, 1) 0.4s backwards; }
-@keyframes ring-draw { from { stroke-dashoffset: var(--ring-len); } to { stroke-dashoffset: var(--ring-off); } }
-.ring-draw { stroke-dasharray: var(--ring-len); stroke-dashoffset: var(--ring-off); animation: ring-draw 1.4s cubic-bezier(0.22, 1, 0.36, 1) 0.5s backwards; }
-@keyframes rise-sm { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; } }
-.rise-sm { animation: rise-sm 0.6s ease-out backwards; animation-delay: calc(var(--i, 0) * 120ms); }
-.lift { transition: transform 0.25s ease; }
-.lift:hover { transform: translateY(-4px); }
+/* Shared timing tokens. Every reveal on the page reads these. */
+:root {
+  --ease: cubic-bezier(0.22, 1, 0.36, 1);
+  --dur-short: 400ms;
+  --dur: 600ms;
+  --dur-long: 700ms;
+  --dist: 16px;
+  --dist-sm: 8px;
+  --step: 100ms;
+}
+/* Reveal (components/landing/reveal.tsx). Hidden state only applies once the inline script adds .js. */
+[data-reveal] {
+  --shown: 1;
+  transition: opacity var(--dur) var(--ease) var(--delay, 0ms), transform var(--dur) var(--ease) var(--delay, 0ms);
+}
+.js [data-reveal=""] {
+  --shown: 0;
+  opacity: 0;
+  transform: translate3d(var(--rx, 0px), var(--ry, var(--dist)), 0);
+}
+/* Children of a Reveal follow --shown (0 before, 1 after). Transform and stroke-dashoffset only. */
+.grow-x { transform-origin: left; transform: scaleX(var(--shown, 1)); transition: transform var(--dur-long) var(--ease) calc(var(--bar-base, 300ms) + var(--i, 0) * 90ms); }
+.grow-y { transform-origin: top; transform: scaleY(var(--shown, 1)); transition: transform var(--dur-long) var(--ease) calc(var(--bar-base, 300ms) + var(--i, 0) * 90ms); }
+.grow-y-up { transform-origin: bottom; transform: scaleY(var(--shown, 1)); transition: transform var(--dur-long) var(--ease) calc(var(--bar-base, 300ms) + var(--i, 0) * 90ms); }
+.ring-draw {
+  stroke-dasharray: var(--ring-len);
+  stroke-dashoffset: calc(var(--ring-len) - (var(--ring-len) - var(--ring-off)) * var(--shown, 1));
+  transition: stroke-dashoffset var(--dur-long) var(--ease) var(--ring-delay, 300ms);
+}
+/* Hover lift, pointer devices only. Uses the individual translate property so it never fights a reveal transform. */
+@media (hover: hover) {
+  .lift { transition: translate 200ms ease, box-shadow 200ms ease; }
+  .lift:hover { translate: 0 -3px; box-shadow: 0 24px 56px -16px rgb(7 27 43 / 0.36), 0 3px 8px rgb(7 27 43 / 0.08); }
+  .btn-lift { transition: translate 200ms ease, background-color 200ms ease, color 200ms ease, border-color 200ms ease; }
+  .btn-lift:hover { translate: 0 -2px; }
+}
 html { scroll-behavior: smooth; scroll-padding-top: 88px; }
 .landing :focus-visible { outline: 2px solid var(--teal); outline-offset: 3px; border-radius: 6px; }
 .landing .on-dark :focus-visible { outline-color: var(--mist); }
@@ -117,11 +143,16 @@ html { scroll-behavior: smooth; scroll-padding-top: 88px; }
 
 @media (prefers-reduced-motion: reduce) {
   .animate-spin-slow { animation: none; }
-  .rise, .rise-sm, .grow-x, .ring-draw { animation: none !important; opacity: 1; transform: none; }
+  [data-reveal], .js [data-reveal=""] { opacity: 1 !important; transform: none !important; transition: none !important; --shown: 1 !important; }
+  .grow-x, .grow-y, .grow-y-up, .ring-draw { transition: none !important; }
   html { scroll-behavior: auto; }
-  .lift { transition: none; }
+  .lift, .btn-lift { transition: none !important; }
   [data-marquee-track] { animation: none !important; }
 }
+
+/* Sample plan header: heading size drives the right block's bottom offset so the button sits on the heading baseline. */
+.sample-head { --h2: clamp(2.25rem, 4.4vw, 3.75rem); }
+@media (min-width: 1024px) { .sample-head { --h2: clamp(3.5rem, 4.4vw, 3.75rem); } }
 
 /* ---------------- Landing hero surface ---------------- */
 .hero-surface { background: linear-gradient(180deg, var(--ink) 0%, var(--ink) 38%, var(--teal) 100%); }
