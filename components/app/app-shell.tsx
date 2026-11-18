@@ -110,7 +110,7 @@ export function AppShell({
       <AnimatePresence>
         {mobileOpen && (
           <>
-            <motion.div className="fixed inset-0 z-40 bg-ink/40 lg:hidden" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} onClick={() => setMobileOpen(false)} />
+            <motion.div className="fixed inset-0 z-40 bg-ws-ink/40 lg:hidden" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} onClick={() => setMobileOpen(false)} />
             <motion.aside
               className="fixed inset-y-0 left-0 z-50 flex w-72 flex-col gap-6 bg-card p-4 lg:hidden"
               initial={{ x: "-100%" }} animate={{ x: 0 }} exit={{ x: "-100%" }} transition={{ type: "spring", stiffness: 320, damping: 34 }}

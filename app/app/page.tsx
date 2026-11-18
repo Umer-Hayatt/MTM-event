@@ -4,6 +4,7 @@
 // Talks to POST /api/run (same run() as the CLI). Missing facts go to POST /api/answer (HITL contract).
 import { createContext, useContext, useEffect, useMemo, useRef, useState } from "react";
 import clsx from "clsx";
+import Link from "next/link";
 import { AnimatePresence, MotionConfig, motion, type Variants } from "motion/react";
 import { ArrowUp, ChevronDown, Download, FileText, Loader2, Paperclip, Plus, X } from "lucide-react";
 import { Globe } from "@/components/globe";
@@ -117,6 +118,7 @@ export default function Page() {
           {/* ---------------- Sidebar ---------------- */}
           <aside className="hidden w-60 shrink-0 flex-col border-r border-border bg-surface p-3 md:flex">
             <p className="px-3 py-2 text-[15px] font-semibold tracking-tight">Inbox → Plan</p>
+            <Link href="/" className="mx-3 -mt-1 text-xs text-muted underline underline-offset-2">← Back to site</Link>
 
             <button onClick={() => setView("new")} className={clsx("mt-2 flex items-center gap-2 rounded-lg px-3 py-2 text-sm font-medium transition", view === "new" ? "bg-card shadow-sm" : "hover:bg-card/60")}>
               <Plus className="size-4" />New plan
@@ -150,7 +152,7 @@ export default function Page() {
               <div className="flex items-center gap-3">
                 {s?.mode && <span className="hidden text-xs text-muted sm:inline">{s.mode === "fresh" ? "Built a new plan" : "Updated the plan"}</span>}
                 {openGaps.length > 0 && (
-                  <button onClick={() => setAskOpen(true)} className="flex h-8 items-center gap-2 rounded-full bg-ink px-3.5 text-xs font-medium text-ink-foreground transition active:scale-95">
+                  <button onClick={() => setAskOpen(true)} className="flex h-8 items-center gap-2 rounded-full bg-ws-ink px-3.5 text-xs font-medium text-ws-ink-foreground transition active:scale-95">
                     <span className="grid size-5 place-items-center rounded-full bg-highlight text-[11px] font-semibold text-highlight-foreground tabular-nums">{openGaps.length}</span>
                     {openGaps.length === 1 ? "Question for you" : "Questions for you"}
                   </button>
@@ -204,7 +206,7 @@ export default function Page() {
                             </button>
                             <input ref={fileRef} type="file" multiple accept=".txt,.md,text/plain" hidden onChange={(e) => { addFiles(e.target.files); e.target.value = ""; }} />
                             <button onClick={submit} disabled={busy || (!text.trim() && !files.length)}
-                              className="flex h-9 items-center gap-2 rounded-full bg-ink px-4 text-sm font-medium text-ink-foreground transition active:scale-95 disabled:opacity-40">
+                              className="flex h-9 items-center gap-2 rounded-full bg-ws-ink px-4 text-sm font-medium text-ws-ink-foreground transition active:scale-95 disabled:opacity-40">
                               {busy ? <><Loader2 className="size-4 animate-spin" />Planning…</> : <>Make the plan<ArrowUp className="size-4" /></>}
                             </button>
                           </div>
@@ -276,7 +278,7 @@ function Overview({ s, openGaps, ask, go }: { s: Session; openGaps: number; ask:
       {openGaps > 0 && (
         <motion.div variants={item} className="flex flex-wrap items-center justify-between gap-3 rounded-xl border border-border bg-card px-4 py-3 text-sm">
           <p><b>{openGaps} {openGaps === 1 ? "detail is" : "details are"} missing.</b> <span className="text-muted">Those parts show as TBA until you answer.</span></p>
-          <button onClick={ask} className="rounded-lg bg-ink px-3.5 py-1.5 font-medium text-ink-foreground">Answer now</button>
+          <button onClick={ask} className="rounded-lg bg-ws-ink px-3.5 py-1.5 font-medium text-ws-ink-foreground">Answer now</button>
         </motion.div>
       )}
 
@@ -330,7 +332,7 @@ function Overview({ s, openGaps, ask, go }: { s: Session; openGaps: number; ask:
 
 /* ---------------- schedule ---------------- */
 
-const blockTone = (name: string) => (/build|hack|work/i.test(name) ? "bg-accent" : /judg|demo|present/i.test(name) ? "bg-highlight" : /lunch|break|meal|dinner|tea/i.test(name) ? "bg-muted/40" : "bg-ink/70");
+const blockTone = (name: string) => (/build|hack|work/i.test(name) ? "bg-accent" : /judg|demo|present/i.test(name) ? "bg-highlight" : /lunch|break|meal|dinner|tea/i.test(name) ? "bg-muted/40" : "bg-ws-ink/70");
 
 function Schedule({ p }: { p: Session["plan"] }) {
   if (!p) return <Empty>There is no plan yet.</Empty>;
@@ -461,7 +463,7 @@ function Inbox({ messages, focus }: { messages: MessageRecord[]; focus: number |
       <motion.div variants={item} className="flex gap-1" role="tablist">
         {tabs.map(([id, label]) => (
           <button key={id} role="tab" aria-selected={filter === id} onClick={() => setFilter(id)}
-            className={clsx("rounded-full px-3.5 py-1.5 text-sm transition", filter === id ? "bg-ink text-ink-foreground" : "bg-card text-muted hover:text-foreground")}>{label}</button>
+            className={clsx("rounded-full px-3.5 py-1.5 text-sm transition", filter === id ? "bg-ws-ink text-ws-ink-foreground" : "bg-card text-muted hover:text-foreground")}>{label}</button>
         ))}
       </motion.div>
       <motion.ul variants={list} initial="hidden" animate="show" className="space-y-2.5">
@@ -499,7 +501,7 @@ function AskPanel({ open, onClose, gaps, answer }: { open: boolean; onClose: () 
     <AnimatePresence>
       {open && (
         <>
-          <motion.div key="shade" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} onClick={onClose} className="fixed inset-0 z-40 bg-ink/30" />
+          <motion.div key="shade" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} onClick={onClose} className="fixed inset-0 z-40 bg-ws-ink/30" />
           <motion.aside key="panel" role="dialog" aria-modal="true" aria-label="Questions for you"
             initial={{ x: "100%" }} animate={{ x: 0 }} exit={{ x: "100%" }} transition={{ type: "spring", damping: 32, stiffness: 320 }}
             className="fixed inset-y-0 right-0 z-50 flex w-full max-w-md flex-col border-l border-border bg-background shadow-xl">
@@ -541,7 +543,7 @@ function GapCard({ g, answer }: { g: Gap; answer: Answer }) {
             placeholder={g.kind === "time" ? "For example 09:00" : g.kind === "number" ? "Type a number" : "Type your answer"}
             className="mt-3 h-10 w-full rounded-lg border border-border bg-background px-3 text-sm outline-none focus:border-foreground" />
           <div className="mt-2 flex items-center gap-2">
-            <button onClick={() => run("value")} disabled={busy || !v.trim()} className="h-9 rounded-lg bg-ink px-4 text-sm font-medium text-ink-foreground disabled:opacity-40">{busy ? "Saving…" : "Save"}</button>
+            <button onClick={() => run("value")} disabled={busy || !v.trim()} className="h-9 rounded-lg bg-ws-ink px-4 text-sm font-medium text-ws-ink-foreground disabled:opacity-40">{busy ? "Saving…" : "Save"}</button>
             <button onClick={() => run("tba")} disabled={busy} className="h-9 rounded-lg border border-border px-3 text-sm hover:bg-surface">Leave as TBA</button>
             <button onClick={() => run("ignore")} disabled={busy} className="h-9 rounded-lg px-3 text-sm text-muted hover:bg-surface">Skip</button>
           </div>
@@ -577,7 +579,7 @@ function CallRow({ c }: { c: TraceCall }) {
     <div className={clsx("rounded-lg border p-3 text-xs", c.ok ? "border-border" : "border-danger")}>
       <button onClick={() => setOpen((o) => !o)} aria-expanded={open} className="flex w-full items-center gap-2 text-left">
         <span className="font-mono font-semibold">#{c.n}</span>
-        <span className="rounded bg-ink px-1.5 py-0.5 text-[10px] font-medium uppercase text-ink-foreground">{c.area}</span>
+        <span className="rounded bg-ws-ink px-1.5 py-0.5 text-[10px] font-medium uppercase text-ws-ink-foreground">{c.area}</span>
         <span className="truncate text-muted">{c.model}</span>
         <ChevronDown className={clsx("ml-auto size-4 shrink-0 transition", open && "rotate-180")} />
       </button>

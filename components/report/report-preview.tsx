@@ -39,7 +39,7 @@ export function ReportPreview({ report, rows, filenameBase, label = "Preview rep
         {label}
       </button>
       {open && createPortal(
-        <div role="dialog" aria-modal="true" aria-label="Report preview" className="fixed inset-0 z-50 flex flex-col bg-ink/70">
+        <div role="dialog" aria-modal="true" aria-label="Report preview" className="fixed inset-0 z-50 flex flex-col bg-ws-ink/70">
           <div className="flex items-center justify-between gap-3 border-b border-border bg-card px-5 py-3">
             <p className="truncate text-sm font-medium">{report.title}</p>
             <div className="flex items-center gap-2">

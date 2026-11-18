@@ -346,7 +346,7 @@ function TraceDetail({ event: e, t0, dur, compact }: { event: TraceEvent; t0: nu
         <pre
           tabIndex={0}
           aria-label={`Data for ${e.label}`}
-          className="max-h-56 overflow-auto rounded-xl bg-ink p-3 font-mono text-[11px] leading-relaxed text-ink-foreground focus-visible:outline-2 focus-visible:outline-accent"
+          className="max-h-56 overflow-auto rounded-xl bg-ws-ink p-3 font-mono text-[11px] leading-relaxed text-ws-ink-foreground focus-visible:outline-2 focus-visible:outline-accent"
         >
           {safeJson(e.data)}
         </pre>
