@@ -120,3 +120,11 @@ html { scroll-behavior: smooth; scroll-padding-top: 88px; }
   .lift { transition: none; }
   [data-marquee-track] { animation: none !important; }
 }
+
+/* ---------------- Landing hero surface ---------------- */
+.hero-surface { background: linear-gradient(180deg, var(--ink) 0%, var(--ink) 38%, var(--teal) 100%); }
+.hero-photo { -webkit-mask-image: linear-gradient(to bottom, transparent 0%, #000 45%); mask-image: linear-gradient(to bottom, transparent 0%, #000 45%); }
+@media (min-width: 1024px) {
+  .hero-surface { background: linear-gradient(100deg, var(--ink) 0%, var(--ink) 34%, var(--teal) 100%); }
+  .hero-photo { -webkit-mask-image: linear-gradient(to right, transparent 0%, transparent 30%, #000 74%); mask-image: linear-gradient(to right, transparent 0%, transparent 30%, #000 74%); }
+}

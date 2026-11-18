@@ -20,7 +20,7 @@ export function BentoStats() {
       </div>
 
       {/* Ink: zero */}
-      <div className="rise lift col-span-1 flex min-h-[248px] flex-col justify-between rounded-[20px] bg-ink p-6 text-paper lg:col-span-3" style={{ "--i": 10 } as React.CSSProperties}>
+      <div className="rise lift col-span-1 flex min-h-[248px] flex-col justify-between rounded-[20px] bg-ink p-6 text-paper ring-1 ring-paper/20 lg:col-span-3" style={{ "--i": 10 } as React.CSSProperties}>
         <p className="text-xs font-medium uppercase tracking-[0.08em] text-mist">The model only reads</p>
         <div>
           <p className="tnum text-[88px] font-medium leading-[0.9] text-mist">0</p>

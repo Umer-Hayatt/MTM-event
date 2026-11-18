@@ -5,43 +5,63 @@ import { BentoStats } from "./bento-stats";
 import { heroBlur } from "./blur";
 import { wrap } from "./ui";
 
+/* Contour arcs: Mist hairlines at low opacity, centred behind the card cluster. */
+function Contours() {
+  const radii = [160, 260, 360, 460, 560, 660, 760];
+  return (
+    <svg className="pointer-events-none absolute inset-0 size-full" viewBox="0 0 1392 820" preserveAspectRatio="xMaxYMid slice" aria-hidden="true">
+      {radii.map((r, i) => (
+        <circle key={r} cx="1080" cy="330" r={r} fill="none" stroke="var(--mist)" strokeWidth="1" opacity={i % 2 ? 0.07 : 0.11} />
+      ))}
+      <path d="M0 640 C 300 560, 520 700, 820 620 S 1260 560, 1392 600" fill="none" stroke="var(--mist)" strokeWidth="1" opacity="0.08" />
+      <path d="M0 700 C 300 620, 520 760, 820 680 S 1260 620, 1392 660" fill="none" stroke="var(--mist)" strokeWidth="1" opacity="0.06" />
+    </svg>
+  );
+}
+
 export function Hero() {
   return (
     <section aria-labelledby="hero-title" className="relative pb-8 md:pb-12">
       <div className="mx-0 md:mx-6">
-        <div className="relative mx-auto max-w-[1392px] overflow-hidden rounded-none bg-mist md:rounded-[32px] md:ring-1 md:ring-ink/10">
-          {/* Photo and grade */}
-          <Image
-            src="/images/auditorium-seating-hero.jpg"
-            alt="Rows of empty wooden auditorium seats rising toward a panelled wall under a curved ceiling."
-            fill
-            priority
-            sizes="(min-width: 1440px) 1392px, 100vw"
-            placeholder="blur"
-            blurDataURL={heroBlur}
-            className="object-cover object-[60%_70%] saturate-[0.8]"
-          />
-          <div className="absolute inset-0 bg-teal/25 mix-blend-multiply" aria-hidden="true" />
-          <div className="absolute inset-0 bg-ink/10" aria-hidden="true" />
-          <div className="absolute inset-0 bg-gradient-to-b from-paper from-25% via-paper/80 to-transparent lg:bg-gradient-to-r lg:from-paper lg:from-30% lg:via-paper/80 lg:via-50% lg:to-transparent lg:to-75%" aria-hidden="true" />
+        <div className="hero-surface relative mx-auto max-w-[1392px] overflow-hidden rounded-none md:rounded-[32px]">
+          {/* Photo: right side on desktop, lower half on mobile, blended into the gradient */}
+          <div className="hero-photo absolute inset-x-0 bottom-0 h-[62%] lg:inset-y-0 lg:left-auto lg:right-0 lg:h-full lg:w-[66%]">
+            <Image
+              src="/images/auditorium-seating-hero.jpg"
+              alt="Rows of empty wooden auditorium seats rising toward a panelled wall under a curved ceiling."
+              fill
+              priority
+              sizes="(min-width: 1440px) 920px, (min-width: 1024px) 66vw, 100vw"
+              placeholder="blur"
+              blurDataURL={heroBlur}
+              className="object-cover object-[60%_65%] saturate-[0.35]"
+            />
+            <div className="absolute inset-0 bg-teal opacity-85 mix-blend-color" aria-hidden="true" />
+            <div className="absolute inset-0 bg-ink/15 mix-blend-multiply" aria-hidden="true" />
+          </div>
+          <Contours />
 
-          <div className="relative grid gap-12 px-5 pb-48 pt-10 md:px-12 md:pt-14 lg:grid-cols-[minmax(0,1.12fr)_minmax(0,0.88fr)] lg:gap-6 lg:pb-52 lg:pt-16">
-            <div className="max-w-[760px]">
-              <h1 className="rise font-serif text-[clamp(2.75rem,6.2vw,5.75rem)] font-bold leading-[0.98] tracking-[-0.025em] text-ink" style={{ "--i": 0 } as React.CSSProperties}>
-                From scattered messages to a plan you can audit.
+          <div className="relative grid gap-12 px-5 pb-48 pt-12 md:px-12 md:pt-16 lg:grid-cols-[minmax(0,1fr)_minmax(0,1fr)] lg:gap-6 lg:pb-52 lg:pt-20">
+            <div className="max-w-[640px]">
+              <span className="rise inline-flex items-center rounded-full bg-mist px-3.5 py-1.5 text-[13px] font-medium leading-none text-ink" style={{ "--i": 0 } as React.CSSProperties}>
+                Inbox → Plan
+              </span>
+              <h1 id="hero-title" className="rise mt-6 font-serif text-[clamp(2.75rem,5.8vw,5.25rem)] font-bold leading-[0.98] tracking-[-0.025em] text-paper" style={{ "--i": 1 } as React.CSSProperties}>
+                <span className="block">Messages in.</span>
+                <span className="block">Plan out.</span>
               </h1>
-              <p className="rise mt-7 max-w-[520px] text-[17px] leading-relaxed text-ink md:text-lg" style={{ "--i": 1 } as React.CSSProperties}>
-                Paste the emails, WhatsApp chats and memos. Convene reads them, checks who is allowed to say what, and builds a budgeted plan where every number points back to a message.
+              <p className="rise mt-7 max-w-[440px] text-[17px] leading-relaxed text-mist md:text-lg" style={{ "--i": 2 } as React.CSSProperties}>
+                Paste the chats and emails. Get a plan where every number has a source.
               </p>
-              <div className="rise mt-9 flex flex-wrap items-center gap-3" style={{ "--i": 2 } as React.CSSProperties}>
-                <Link href="/app" className="inline-flex items-center rounded-full bg-teal px-7 py-3.5 text-base font-semibold text-white transition hover:bg-ink">
+              <div className="rise mt-9 flex flex-wrap items-center gap-3" style={{ "--i": 3 } as React.CSSProperties}>
+                <Link href="/app" className="inline-flex items-center rounded-full bg-paper px-7 py-3.5 text-base font-semibold text-ink transition hover:bg-white">
                   Make a plan
                 </Link>
-                <a href="#sample-plan" className="inline-flex items-center rounded-full border border-ink px-7 py-3.5 text-base font-semibold text-ink transition hover:bg-ink hover:text-paper">
+                <a href="#sample-plan" className="inline-flex items-center rounded-full border border-mist/70 px-7 py-3.5 text-base font-semibold text-paper transition hover:bg-paper/10">
                   See a sample plan
                 </a>
               </div>
-              <p className="rise mt-8 text-[15px] font-medium text-ink" style={{ "--i": 3 } as React.CSSProperties}>
+              <p className="rise mt-8 text-[15px] font-medium text-mist" style={{ "--i": 4 } as React.CSSProperties}>
                 / The model reads. Code decides. /
               </p>
             </div>
@@ -51,7 +71,7 @@ export function Hero() {
         </div>
       </div>
 
-      {/* Bento row overlaps the bottom edge of the photo panel */}
+      {/* Bento row overlaps the bottom edge of the panel */}
       <div className={`${wrap} relative z-10 -mt-36 lg:-mt-40`}>
         <BentoStats />
       </div>
