@@ -1,0 +1,88 @@
+@import "tailwindcss";
+
+/* ---------------------------------------------------------------
+   ONE THEME FOR EVERYTHING.
+   Every component reads these tokens. To rebrand, change the
+   values below — nothing else.
+
+   accent     = primary actions, active states, links, charts series 1
+   highlight  = bright secondary (active pills, badges on dark, series 2)
+   ink        = dark sections (hero, sidebars, footer)
+---------------------------------------------------------------- */
+:root {
+  --background: #f4f5f1;
+  --foreground: #111412;
+  --card: #ffffff;
+  --surface: #eceee8;
+  --muted: #646b64;
+  --border: #e1e4dc;
+
+  --accent: #1f4d3a;
+  --accent-foreground: #ffffff;
+  --highlight: #b5ec8f;
+  --highlight-foreground: #10240f;
+
+  --ink: #0f1311;
+  --ink-foreground: #f2f4ef;
+
+  --danger: #d93f2b;
+  --success: #1f9d55;
+
+  --radius: 16px;
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-surface: var(--surface);
+  --color-muted: var(--muted);
+  --color-border: var(--border);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-highlight: var(--highlight);
+  --color-highlight-foreground: var(--highlight-foreground);
+  --color-ink: var(--ink);
+  --color-ink-foreground: var(--ink-foreground);
+  --color-danger: var(--danger);
+  --color-success: var(--success);
+  --font-sans: var(--font-inter);
+  --font-display: var(--font-anton);
+  --font-serif: var(--font-serif);
+  --radius-card: var(--radius);
+}
+
+/* Tailwind 4 defaults borders to currentColor; use the theme border everywhere instead */
+@layer base {
+  *, ::before, ::after { border-color: var(--border); }
+  ::selection { background: var(--highlight); color: var(--highlight-foreground); }
+}
+
+body {
+  background: var(--background);
+  color: var(--foreground);
+  font-family: var(--font-inter), system-ui, sans-serif;
+}
+
+/* Striped fill (uses the element's text color) */
+.stripes {
+  background-image: repeating-linear-gradient(-45deg, currentColor 0 4px, transparent 4px 9px);
+}
+
+/* Outline text used by the hero slider intro */
+.text-outline {
+  color: transparent;
+  -webkit-text-stroke: 1.5px rgba(255, 255, 255, 0.55);
+}
+
+@keyframes spin-slow { to { transform: rotate(360deg); } }
+.animate-spin-slow { animation: spin-slow 14s linear infinite; }
+
+/* Marquee */
+@keyframes marquee-x { to { transform: translateX(calc(-50% - var(--gap) / 2)); } }
+@keyframes marquee-y { to { transform: translateY(calc(-50% - var(--gap) / 2)); } }
+
+@media (prefers-reduced-motion: reduce) {
+  .animate-spin-slow { animation: none; }
+  [data-marquee-track] { animation: none !important; }
+}

@@ -1,0 +1,24 @@
+# reference material and tooling, not part of the product
+/_reference/
+/.playwright-mcp/
+/.claude/
+
+# dependencies / build
+/node_modules
+/.next/
+/build
+*.tsbuildinfo
+next-env.d.ts
+.vercel
+
+# secrets
+.env
+.env.*
+!.env.example
+
+# runtime output and state (written by every run)
+/out/
+/state/
+
+.DS_Store
+npm-debug.log*
