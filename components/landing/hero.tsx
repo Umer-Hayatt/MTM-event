@@ -61,9 +61,6 @@ export function Hero() {
                   See a sample plan
                 </a>
               </div>
-              <p className="rise mt-8 text-[15px] font-medium text-mist" style={{ "--i": 4 } as React.CSSProperties}>
-                / The model reads. Code decides. /
-              </p>
             </div>
 
             <ProductCluster />

@@ -1,6 +1,5 @@
 import { Nav } from "@/components/landing/nav";
 import { Hero } from "@/components/landing/hero";
-import { Problem } from "@/components/landing/problem";
 import { HowItWorks } from "@/components/landing/how-it-works";
 import { AuditBand } from "@/components/landing/audit-band";
 import { SamplePlan } from "@/components/landing/sample-plan";
@@ -14,7 +13,6 @@ export default function Landing() {
       <Nav />
       <main id="main">
         <Hero />
-        <Problem />
         <HowItWorks />
         <AuditBand />
         <SamplePlan />

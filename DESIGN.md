@@ -25,7 +25,7 @@ Contrast rules:
 - Teal on Paper is about 4.2:1. Never use Teal for small body text on Paper. Small text is Ink.
 - White on Teal passes and is used for buttons and the CTA band.
 - On Ink and over photos use Paper or Mist text. Fix legibility with the scrim, never by changing the type color.
-- Hero text is Paper (heading), Mist (subline, tagline). Measured at the brightest pixel behind each text box: at least 8:1 at 390, 768 and 1024, and 9:1 at 1280 and 1440. Fix legibility with the gradient stops and photo mask, never the text color.
+- Hero text is Paper (heading), Mist (subline). Measured at the brightest pixel behind each text box: at least 8:1 at 390, 768 and 1024, and 9:1 at 1280 and 1440. Fix legibility with the gradient stops and photo mask, never the text color.
 
 ## Typography
 
@@ -49,7 +49,7 @@ Numbers and tables use `font-variant-numeric: tabular-nums` (`.tnum`). Hero head
 
 ## Photography
 
-Real photographs only, from Unsplash under the Unsplash License. Credits live in `public/images/CREDITS.md` and the footer.
+Real photographs only, from Unsplash under the Unsplash License. Credits live in `public/images/CREDITS.md` (not shown on the page).
 
 - Hero: wide, calm, documentary, real event setting (an empty auditorium), no readable signs, logos or text, no dominant faces. Used at 2400px wide.
 - Tile: a closer detail in the same family (hands, notebook, laptop). Portrait.
@@ -63,18 +63,18 @@ Real photographs only, from Unsplash under the Unsplash License. Credits live in
 The hero panel (32px radius, inset 24px from the page edge, full bleed on mobile) is a deep blue surface: `linear-gradient(100deg, Ink 0 to 34%, Teal 100%)` on desktop, a vertical Ink to Teal gradient on mobile (`.hero-surface`). The nav stays on Paper above it.
 
 - Depth: a few Mist hairline arcs and contour lines at 6 to 11% opacity behind the cards (inline SVG in `hero.tsx`). No glow, no blur orbs, no neon.
-- Type: label pill "Inbox → Plan" (Mist background, Ink text), H1 "Messages in. Plan out." in Paper on two lines (`clamp(2.75rem, 5.8vw, 5.25rem)`), subline in Mist, tagline in Mist.
+- Type: label pill "Inbox → Plan" (Mist background, Ink text), H1 "Messages in. Plan out." in Paper on two lines (`clamp(2.75rem, 5.8vw, 5.25rem)`), subline in Mist. There is no tagline line under the buttons.
 - Buttons: primary is Paper with Ink text (strongest contrast on the blue), secondary is outlined Mist with Paper text.
 - Cards: plan, message and rejected cards stay white so they pop. Each shows a small "Sample" or "Sample plan" label. The trace chip sits in the gap above the message card (stacked below the cards under 1280px) and must never overlap the ring, numbers or card text; check at 1440, 1280, 1024, 768 and 390.
 - Nav: desktop links from 1024px up, hamburger drawer below.
 
 ## Footer
 
-One row of anchor links (Product, How it works, Audit, Sample plan) and a photo credits line under a hairline, on Ink. No wordmark, no description, no buttons. Sample data is labeled where it appears (hero cards, bento chart, sample plan section) rather than in the footer.
+One row of anchor links (How it works, Audit, Sample plan) on Ink. Nothing else: no wordmark, no description, no buttons, no photo credits line. Sample data is labeled where it appears (hero cards, bento chart, sample plan section) rather than in the footer. The page order is nav, hero (with the bento row overlapping its bottom edge), how it works, audit, sample plan, CTA band, footer. There is no separate problem section.
 
 ## Components (`components/landing/`)
 
-`nav` (sticky, transparent then Paper blur on scroll, drawer on mobile), `hero`, `product-cluster` (plan card with budget ring, message card, rejected card, trace chip, scroll ring), `bento-stats`, `problem`, `how-it-works`, `audit-band`, `sample-plan`, `cta-band`, `footer`, plus `ui` (wordmark and mark, pills, message chips, ring, arrows, `SAMPLE` data) and `blur` (generated placeholders).
+`nav` (sticky, transparent then Paper blur on scroll, drawer on mobile), `hero`, `product-cluster` (plan card with budget ring, message card, rejected card, trace chip, scroll ring), `bento-stats`, `how-it-works`, `audit-band`, `sample-plan`, `cta-band`, `footer`, plus `ui` (wordmark and mark, pills, message chips, ring, arrows, `SAMPLE` data) and `blur` (generated placeholders).
 
 All product visuals are HTML, CSS and SVG. Sample figures come from `samples/sample_pack.txt` (177 people, Hall A, Rs 597,400 of Rs 650,000, 17 judges, 6 checks) and are always labeled "Sample plan" or "Sample". The trace token counts other than "Call 1 · 2,413" are illustrative.
 

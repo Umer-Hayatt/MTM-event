@@ -5,7 +5,6 @@ import { useEffect, useState } from "react";
 import { Wordmark, wrap } from "./ui";
 
 const links = [
-  { href: "#product", label: "Product" },
   { href: "#how-it-works", label: "How it works" },
   { href: "#audit", label: "Audit" },
   { href: "#sample-plan", label: "Sample plan" },

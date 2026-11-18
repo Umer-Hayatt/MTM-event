@@ -1,6 +1,6 @@
 import { wrap } from "./ui";
 
-const links = [["#product", "Product"], ["#how-it-works", "How it works"], ["#audit", "Audit"], ["#sample-plan", "Sample plan"]];
+const links = [["#how-it-works", "How it works"], ["#audit", "Audit"], ["#sample-plan", "Sample plan"]];
 
 export function Footer() {
   return (
@@ -13,13 +13,6 @@ export function Footer() {
             ))}
           </ul>
         </nav>
-        <p className="mt-8 border-t border-paper/20 pt-6 text-[13px] text-paper/85">
-          Photo credits:{" "}
-          <a className="underline underline-offset-2" href="https://unsplash.com/photos/an-auditorium-is-filled-with-empty-seats-jBS44aPweh4">set.sj</a>
-          {" and "}
-          <a className="underline underline-offset-2" href="https://unsplash.com/photos/hand-writing-notes-in-a-notebook-at-a-desk-1rm4_SojyNM">Jakub Żerdzicki</a>
-          , via Unsplash.
-        </p>
       </div>
     </footer>
   );

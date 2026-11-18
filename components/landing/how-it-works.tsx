@@ -26,7 +26,7 @@ export function HowItWorks() {
         <div className="max-w-[720px]">
           <p className="text-sm font-medium text-ink">How it works</p>
           <h2 id="how-title" className="mt-4 font-serif text-[clamp(2.25rem,4.4vw,3.75rem)] font-bold leading-[1.02] tracking-[-0.02em] text-ink">
-            The model reads once. Everything after that is plain code.
+            Read every message. Keep what&apos;s current. Build the plan from it.
           </h2>
         </div>
 

@@ -37,7 +37,7 @@ export function Pill({ children, tone = "line" }: { children: ReactNode; tone?: 
 
 export function MsgChip({ n, dark = false }: { n: number; dark?: boolean }) {
   return (
-    <span className={`tnum inline-flex items-center rounded-full px-2 py-0.5 text-[11px] font-medium leading-none ${dark ? "bg-paper/10 text-mist" : "bg-mist text-ink"}`}>
+    <span className={`tnum inline-flex items-center whitespace-nowrap rounded-full px-2 py-0.5 text-[11px] font-medium leading-none ${dark ? "bg-paper/10 text-mist" : "bg-mist text-ink"}`}>
       Msg {n}
     </span>
   );

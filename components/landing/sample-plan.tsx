@@ -18,15 +18,12 @@ export function SamplePlan() {
   return (
     <section id="sample-plan" aria-labelledby="sample-title" className="scroll-mt-20 py-24 md:py-32">
       <div className={wrap}>
-        <div className="flex flex-wrap items-end justify-between gap-6">
-          <div className="max-w-[640px]">
-            <Pill tone="mist">Sample plan</Pill>
-            <h2 id="sample-title" className="mt-5 font-serif text-[clamp(2.25rem,4.4vw,3.75rem)] font-bold leading-[1.02] tracking-[-0.02em] text-ink">
-              What a finished plan looks like.
-            </h2>
-            <p className="mt-4 text-[17px] leading-relaxed text-ink">Built from the bundled eight-message sample pack. Static here, live in the workspace.</p>
-          </div>
-          <Link href="/app" className="inline-flex items-center rounded-full bg-teal px-7 py-3.5 text-base font-semibold text-white transition hover:bg-ink">
+        <div className="max-w-[640px]">
+          <Pill tone="mist">Sample plan</Pill>
+          <h2 id="sample-title" className="mt-5 font-serif text-[clamp(2.25rem,4.4vw,3.75rem)] font-bold leading-[1.02] tracking-[-0.02em] text-ink">
+            What a finished plan looks like.
+          </h2>
+          <Link href="/app" className="mt-7 inline-flex items-center rounded-full bg-teal px-7 py-3.5 text-base font-semibold text-white transition hover:bg-ink">
             Try it with your own messages
           </Link>
         </div>
@@ -92,14 +89,14 @@ export function SamplePlan() {
                     <tr key={l.label}>
                       <td className="py-2.5 pr-3 font-medium">{l.label}<span className="ml-2 hidden text-[13px] font-normal text-paper/80 sm:inline">{l.detail}</span></td>
                       <td className="py-2.5 pr-3"><MsgChip n={l.msg} dark /></td>
-                      <td className="tnum py-2.5 text-right font-medium">{rs(l.amount)}</td>
+                      <td className="tnum whitespace-nowrap py-2.5 text-right font-medium">{rs(l.amount)}</td>
                     </tr>
                   ))}
                 </tbody>
                 <tfoot>
                   <tr className="border-t border-paper/30">
                     <td className="pt-3 font-semibold" colSpan={2}>Total</td>
-                    <td className="tnum pt-3 text-right text-[18px] font-medium text-mist">{rs(SAMPLE.total)}</td>
+                    <td className="tnum whitespace-nowrap pt-3 text-right text-[18px] font-medium text-mist">{rs(SAMPLE.total)}</td>
                   </tr>
                 </tfoot>
               </table>
