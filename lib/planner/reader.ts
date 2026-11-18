@@ -54,6 +54,7 @@ K and V:
  other : subject=short text of anything else
 C (hard rule stated by sender): {"area":"venue|food|judging|schedule|budget","target":T,"op":"==|!=|<|<=|>|>=|has","value":V,"hard":true,"text":"original words"}
  T: venue.attrs|venue.seats|venue.price|food.cost|food.price|food.attrs|judges.count|schedule.end|schedule.start|total.cost|or best guess
+ For "has": V is one short snake_case need word; give every option that meets that need the same word in its attrs.
 Q (optional wish/request with a cost): {"area":..,"item":str,"cost":n}
 Rules: money as integer PKR (1.2 lakh=120000, "1,20,000"=120000). Durations in minutes (4-hour=240). Copy each message id. One fact per number. Do not compute totals. relevant=false if nothing affects venue/schedule/food/judging/budget. A fact restated later is still "set". "N more" = "add". Cancelled/closed option = "remove".
 Example: "Director: event is 3 hours for 90 students, teams of 3. Budget Rs 2 lakh." -> facts event.duration_min 180, event.students 90, event.team_size 3, event.budget 200000; sender_role authority.`;
