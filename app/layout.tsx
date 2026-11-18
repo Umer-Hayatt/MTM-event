@@ -1,19 +1,18 @@
 import type { Metadata } from "next";
-import { Inter, Anton, Instrument_Serif } from "next/font/google";
+import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 
-const inter = Inter({ variable: "--font-inter", subsets: ["latin"] });
-const anton = Anton({ variable: "--font-anton", weight: "400", subsets: ["latin"] });
-const serif = Instrument_Serif({ variable: "--font-serif", weight: "400", subsets: ["latin"] });
+const geist = Geist({ variable: "--font-geist", subsets: ["latin"] });
+const geistMono = Geist_Mono({ variable: "--font-geist-mono", subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  title: "Inbox to Plan",
+  title: "MTM Event Planner",
   description: "Turns an event inbox into a valid, budgeted plan.",
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en" className={`${inter.variable} ${anton.variable} ${serif.variable} h-full antialiased`}>
+    <html lang="en" className={`${geist.variable} ${geistMono.variable} h-full antialiased`}>
       <body className="min-h-full flex flex-col">{children}</body>
     </html>
   );
