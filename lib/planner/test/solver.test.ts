@@ -86,3 +86,39 @@ test("finance update to an existing spent item replaces it", () => {
   assert.ok(r.ok);
   assert.equal(r.plan.budget.total, 86000);
 });
+
+test("venue `has` attr filter excludes halls without the attribute", () => {
+  const msgs = base();
+  msgs.push(msg({ date: "05-05", constraints: [{ area: "venue", target: "venue.attrs", op: "has", value: "ramp", hard: true }] }));
+  const r = solve(fold(msgs));
+  assert.ok(r.ok, !r.ok ? r.reason : "");
+  assert.equal(r.plan.venue.name, "Mid");       // Small has no ramp; Mid is the cheapest with one
+});
+
+test("end_by constraint: passes when the event fits, fails when it cannot", () => {
+  const fits = base();
+  fits.push(msg({ date: "05-05", facts: [{ key: "event.start_time", action: "set", value: "09:00" }], constraints: [{ area: "schedule", target: "schedule.end", op: "<=", value: "13:00", hard: true }] }));
+  const ok = solve(fold(fits));
+  assert.ok(ok.ok, !ok.ok ? ok.reason : "");   // 09:00 + 180 min = 12:00
+  const late = base();
+  late.push(msg({ date: "05-05", facts: [{ key: "event.start_time", action: "set", value: "11:00" }], constraints: [{ area: "schedule", target: "schedule.end", op: "<=", value: "13:00", hard: true }] }));
+  const bad = solve(fold(late));
+  assert.equal(bad.ok, false);                  // 11:00 + 180 min = 14:00
+});
+
+test("food cost cap drops the dearer tier", () => {
+  const msgs = base();
+  msgs.push(msg({ date: "05-05", constraints: [{ area: "food", target: "food.cost", op: "<=", value: 25000, hard: true }] }));
+  const r = solve(fold(msgs));
+  assert.ok(r.ok, !r.ok ? r.reason : "");
+  assert.equal(r.plan.food.price, 300);         // 70 x 600 = 42000 > cap; 70 x 300 = 21000 fits
+});
+
+test("unknown constraint target is reported as unhandled, not ignored", () => {
+  const msgs = base();
+  msgs.push(msg({ date: "05-05", constraints: [{ area: "venue", target: "venue.parking_slots", op: ">=", value: 40, hard: true }] }));
+  const r = solve(fold(msgs));
+  assert.ok(r.ok, !r.ok ? r.reason : "");
+  assert.equal(r.plan.unhandled.length, 1);
+  assert.match(r.plan.unhandled[0], /parking_slots/);
+});
