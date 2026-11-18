@@ -9,7 +9,7 @@ import { AnimatePresence, MotionConfig, motion } from "motion/react";
 import { ArrowUp, ChevronDown, Download, FileText, Loader2, Paperclip, Plus, X } from "lucide-react";
 import { Globe } from "@/components/globe";
 import { Reveal } from "@/components/landing/reveal";
-import { Mark } from "@/components/landing/ui";
+import { Wordmark } from "@/components/landing/ui";
 import type { MessageRecord, MessageStatus, Plan, Role, TraceCall, TraceLine } from "@/lib/planner/types";
 
 type Gap = { key: string; question: string; kind: "number" | "time" | "text"; blocks: string[]; status: "open" | "answered" | "tba" | "ignored"; value?: unknown };
@@ -120,9 +120,8 @@ export default function Page() {
         <div className="ws flex h-screen bg-background text-foreground">
           {/* ---------------- Sidebar ---------------- */}
           <aside className="on-dark hidden w-60 shrink-0 flex-col bg-ink p-3 text-paper md:flex">
-            <div className="flex items-center gap-2.5 px-3 pb-1 pt-2">
-              <Mark className="size-6" />
-              <p className="font-serif text-lg font-bold leading-none tracking-[-0.01em]">Inbox → Plan</p>
+            <div className="px-3 pb-1 pt-2">
+              <Wordmark />
             </div>
             <Link href="/" className="mx-3 mt-1.5 text-xs text-mist underline underline-offset-2">← Back to site</Link>
 
