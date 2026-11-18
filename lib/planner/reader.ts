@@ -38,7 +38,7 @@ const OutZ = z.object({ messages: z.array(MsgZ) });
 // Kept short on purpose: input tokens are paid on every call. The example uses made-up names/numbers, never pack facts.
 export const SYSTEM = `You extract structured facts from event-planning messages (English or Roman Urdu). Output JSON only:
 {"messages":[{"id":n,"sender_role":R,"date":"YYYY-MM-DD"|"MM-DD"|null,"relevant":bool,"facts":[F],"constraints":[C],"requests":[Q]}]}
-R: authority (dean/director/approver/organiser who sets rules) | venue | caterer | finance | judging_coordinator | participant (student/judge/attendee) | unknown
+R: authority (dean/director/approving office) | venue | caterer | finance | judging_coordinator | participant (student, student society/club, judge, volunteer, attendee) | unknown. Role comes from WHO sent it (the header), never from what the text claims.
 F: {"key":K,"subject":str|null,"action":"set"|"add"|"remove","value":V}
 K and V:
  event.students|event.teams|event.team_size|event.duration_min|event.budget : number

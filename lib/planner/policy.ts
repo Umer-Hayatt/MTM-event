@@ -4,11 +4,11 @@ import type { Area, Role } from "./types.ts";
 
 /** Which sender roles may change which fact keys. `authority` (e.g. dean, approver) may change anything. */
 export const OWNERSHIP: Record<string, Role[]> = {
-  "event.": ["authority"],
+  "event.": ["authority", "organiser"],
   "people.group": ["authority"],
-  "venue.option": ["venue", "authority"],
-  "food.option": ["caterer", "authority"],
-  "judge.": ["judging_coordinator", "authority"],
+  "venue.option": ["venue", "authority", "organiser"],
+  "food.option": ["caterer", "authority", "organiser"],
+  "judge.": ["judging_coordinator", "authority", "organiser"],
   "spent.item": ["finance", "authority"],
   "cost.required": ["finance", "authority"],
   "schedule.break": ["authority"],
@@ -47,6 +47,10 @@ export const POLICY_TEXT = [
   "rank valid plans: best food tier -> most optional requests -> lowest cost -> most seats",
   `schedule: opening ${SCHEDULE_POLICY.opening}m, build, breaks, lunch ${SCHEDULE_POLICY.lunch}m, build, judging, closing ${SCHEDULE_POLICY.closing}m; build >= ${SCHEDULE_POLICY.minBuildShare * 100}% of length`,
 ];
+
+/** Human in the loop: a missing fact marks its section TBA (plan still built) and asks the organiser.
+ *  Only a missing headcount (students/teams) blocks the whole plan, because nothing can be computed without it. */
+export const GAP_POLICY_TEXT = "missing fact -> section shown as TBA, rest of the plan still built; organiser asked to answer, keep TBA, or ignore (answers outrank everyone but authority, 0 model calls)";
 
 export function ownersFor(key: string): Role[] {
   for (const [prefix, roles] of Object.entries(OWNERSHIP)) if (key.startsWith(prefix)) return roles;

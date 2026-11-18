@@ -5,11 +5,12 @@ import { chronological, fold, isSuperseded, screen } from "./ledger.ts";
 import { CallBudget } from "./llm.ts";
 import { FRESH_RUN_MIN_MESSAGES, FULL_RUN_CALL_LIMIT, UPDATE_CALL_LIMIT, POLICY_TEXT } from "./policy.ts";
 import { readMessages } from "./reader.ts";
+import { answersRecord, mergeGaps, type Answer } from "./gaps.ts";
 import { renderPlan } from "./render.ts";
 import { solve } from "./solver.ts";
 import { hashText, splitMessages } from "./split.ts";
 import { Trace, formatTrace } from "./trace.ts";
-import type { MessageRecord, Plan, TraceLine } from "./types.ts";
+import type { Gap, MessageRecord, Plan, TraceLine } from "./types.ts";
 
 export type Session = {
   messages: MessageRecord[];
@@ -18,11 +19,18 @@ export type Session = {
   trace: TraceLine[];
   nextN: number;
   runs: { mode: string; at: string; calls: number; tokens: number }[];
+  /** Human in the loop: facts still missing, and what the organiser chose for each. */
+  gaps?: Gap[];
+  answers?: Answer[];
 };
 
-export type RunResult = Session & { mode: "fresh" | "update"; modeReason: string; runTokens: { input: number; output: number; total: number; calls: number }; grandTotal: number };
+type Mode = "fresh" | "update" | "answer";
 
-const ROOT = process.cwd();
+export type RunResult = Session & { mode: Mode; modeReason: string; runTokens: { input: number; output: number; total: number; calls: number }; grandTotal: number };
+
+// Vercel functions can only write under /tmp (ephemeral, per instance).
+export const DATA_ROOT = process.env.VERCEL ? "/tmp/mtm" : process.cwd();
+const ROOT = DATA_ROOT;
 const STATE = join(ROOT, "state");
 const OUT = join(ROOT, "out");
 const SESSION = join(STATE, "session.json");
@@ -46,7 +54,7 @@ export async function runText(raw: string): Promise<RunResult> {
   const modeReason = !prev ? "no saved state" : fresh ? `${texts.length} messages in file (>= ${FRESH_RUN_MIN_MESSAGES} means a new pack)` : `${texts.length} message(s), state exists`;
   if (fresh && prev) archive();
 
-  const session: Session = fresh ? { messages: [], plan: null, trace: [], nextN: 1, runs: [] } : prev!;
+  const session: Session = fresh ? { messages: [], plan: null, trace: [], nextN: 1, runs: [], gaps: [], answers: [] } : prev!;
   const trace = new Trace(session.nextN);
   trace.log(`\n===== RUN ${session.runs.length + 1}: MODE ${fresh ? "fresh" : "update"} (${modeReason}) at ${new Date().toISOString()} =====`);
   if (fresh) for (const p of POLICY_TEXT) trace.log(`POLICY: ${p}`);
@@ -79,7 +87,7 @@ export async function runText(raw: string): Promise<RunResult> {
     } catch (e) {
       trace.log(`ERROR: reading failed: ${(e as Error).message}. Plan left unchanged.`);
       for (const r of fresh_) { r.status = "rejected"; r.reason = `could not be read: ${(e as Error).message}`; }
-      return finish(session, trace, fresh, modeReason);
+      return finish(session, trace, fresh ? "fresh" : "update", modeReason);
     }
   }
 
@@ -96,13 +104,13 @@ export async function runText(raw: string): Promise<RunResult> {
   const accepted = () => session.messages.filter((m) => m.status === "accepted" && m.read && !fresh_.includes(m));
   if (fresh) {
     let pool = [...candidates];
-    let res = solve(fold(pool, (s) => trace.log(s)));
+    let res = solve(fold(withAnswers(session, pool), (s) => trace.log(s)));
     // If the full pack cannot be planned, find the newest non-authority message whose removal fixes it: that one is wrong.
     if (!res.ok) {
       const firstReason = res.reason;
       for (const suspect of chronological(pool).reverse().filter((m) => m.read!.sender_role !== "authority")) {
         const without = pool.filter((m) => m !== suspect);
-        const r2 = solve(fold(without));
+        const r2 = solve(fold(withAnswers(session, without)));
         if (r2.ok) {
           suspect.status = "rejected";
           suspect.reason = `conflicts with other facts: with it, ${firstReason}`;
@@ -117,7 +125,7 @@ export async function runText(raw: string): Promise<RunResult> {
   } else {
     for (const r of candidates) {
       const pool = [...accepted(), r];
-      const res = solve(fold(pool));
+      const res = solve(fold(withAnswers(session, pool)));
       if (res.ok) {
         const before = session.plan;
         finalize(session, pool, res, trace);
@@ -130,11 +138,34 @@ export async function runText(raw: string): Promise<RunResult> {
     }
     if (!candidates.length) trace.log("No plan-changing message in this update; plan unchanged.");
   }
-  return finish(session, trace, fresh, modeReason);
+  return finish(session, trace, fresh ? "fresh" : "update", modeReason);
+}
+
+/** Organiser answers ride along as one synthetic message folded last, so they win like any newer fact. */
+function withAnswers(session: Session, pool: MessageRecord[]): MessageRecord[] {
+  const rec = answersRecord(session.answers ?? []);
+  return rec ? [...pool, rec] : pool;
+}
+
+/** Human in the loop: apply one organiser answer (value / keep TBA / ignore). Re-solves only: 0 model calls. */
+export async function answer(a: Answer): Promise<RunResult> {
+  const session = loadSession();
+  if (!session) throw new Error("no plan yet: run a message pack first");
+  session.answers = [...(session.answers ?? []).filter((x) => x.key !== a.key), a];
+  const trace = new Trace(session.nextN);
+  const reason = `organiser ${a.action === "value" ? `answered ${a.key} = ${JSON.stringify(a.value)}` : a.action === "tba" ? `kept ${a.key} as TBA` : `ignored ${a.key}`}`;
+  trace.log(`\n===== RUN ${session.runs.length + 1}: MODE answer (${reason}) at ${new Date().toISOString()} =====`);
+  trace.log("ORGANISER: answers are facts from the organiser; re-solving only (0 model calls)");
+  const pool = session.messages.filter((m) => (m.status === "accepted" || m.status === "superseded") && m.read);
+  const res = solve(fold(withAnswers(session, pool), (s) => trace.log(s)));
+  finalize(session, pool, res, trace);
+  return finish(session, trace, "answer", reason);
 }
 
 function finalize(session: Session, pool: MessageRecord[], res: ReturnType<typeof solve>, trace: Trace) {
-  const st = fold(pool);
+  const st = fold(withAnswers(session, pool));
+  session.gaps = mergeGaps(res.gaps, session.answers ?? []);
+  for (const g of session.gaps.filter((g) => g.status === "open")) trace.log(`GAP (asking organiser): ${g.key}: ${g.question}`);
   for (const l of res.log) trace.log(l);
   if (res.ok) {
     session.plan = res.plan;
@@ -151,10 +182,10 @@ function finalize(session: Session, pool: MessageRecord[], res: ReturnType<typeo
   }
 }
 
-function finish(session: Session, trace: Trace, fresh: boolean, modeReason: string): RunResult {
+function finish(session: Session, trace: Trace, mode: Mode, modeReason: string): RunResult {
   const t = trace.tokens();
   const prevTotal = session.runs.reduce((s, r) => s + r.tokens, 0);
-  session.runs.push({ mode: fresh ? "fresh" : "update", at: new Date().toISOString(), calls: t.calls, tokens: t.total });
+  session.runs.push({ mode, at: new Date().toISOString(), calls: t.calls, tokens: t.total });
   trace.log(`RUN SUBTOTAL: ${t.calls} model calls, tokens input=${t.input} output=${t.output} total=${t.total}`);
   trace.log(`TOTAL TOKENS (session): ${prevTotal + t.total}`);
   session.trace.push(...trace.lines);
@@ -163,10 +194,10 @@ function finish(session: Session, trace: Trace, fresh: boolean, modeReason: stri
   mkdirSync(STATE, { recursive: true });
   mkdirSync(OUT, { recursive: true });
   writeFileSync(SESSION, JSON.stringify(session, null, 2), "utf-8");
-  writeFileSync(join(OUT, "plan.json"), JSON.stringify({ plan: session.plan, infeasible: session.infeasible, messages: session.messages.map(({ text, ...m }) => ({ ...m, text })) }, null, 2), "utf-8");
-  writeFileSync(join(OUT, "plan.md"), renderPlan(session.plan, session.messages, session.infeasible), "utf-8");
+  writeFileSync(join(OUT, "plan.json"), JSON.stringify({ plan: session.plan, infeasible: session.infeasible, gaps: session.gaps ?? [], messages: session.messages.map(({ text, ...m }) => ({ ...m, text })) }, null, 2), "utf-8");
+  writeFileSync(join(OUT, "plan.md"), renderPlan(session.plan, session.messages, session.infeasible, session.gaps), "utf-8");
   writeFileSync(join(OUT, "trace.txt"), formatTrace(session.trace), "utf-8");
-  return { ...session, mode: fresh ? "fresh" : "update", modeReason, runTokens: t, grandTotal: prevTotal + t.total };
+  return { ...session, mode, modeReason, runTokens: t, grandTotal: prevTotal + t.total };
 }
 
 function archive() {

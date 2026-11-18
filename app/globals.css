@@ -1,34 +1,36 @@
 @import "tailwindcss";
 
 /* ---------------------------------------------------------------
-   ONE THEME FOR EVERYTHING.
-   Every component reads these tokens. To rebrand, change the
-   values below — nothing else.
-
-   accent     = primary actions, active states, links, charts series 1
-   highlight  = bright secondary (active pills, badges on dark, series 2)
-   ink        = dark sections (hero, sidebars, footer)
+   ONE THEME. Every component reads these tokens.
+   accent     = primary actions, active states, charts series 1
+   highlight  = bright secondary (badges on dark, series 2)
+   ink        = dark sections
 ---------------------------------------------------------------- */
 :root {
-  --background: #f4f5f1;
+  --background: #f0f2ee;
   --foreground: #111412;
   --card: #ffffff;
-  --surface: #eceee8;
-  --muted: #646b64;
-  --border: #e1e4dc;
+  --surface: #e8ebe4;
+  --muted: #5e6660;
+  --border: #dde0d8;
 
   --accent: #1f4d3a;
   --accent-foreground: #ffffff;
-  --highlight: #b5ec8f;
-  --highlight-foreground: #10240f;
+  --highlight: #a8e070;
+  --highlight-foreground: #0d1f0c;
 
   --ink: #0f1311;
   --ink-foreground: #f2f4ef;
 
-  --danger: #d93f2b;
-  --success: #1f9d55;
+  --danger: #c93b28;
+  --success: #1a8f4c;
 
-  --radius: 16px;
+  --radius: 14px;
+
+  /* Mesh gradient orb positions */
+  --orb-1: radial-gradient(ellipse 60% 50% at 15% 20%, rgba(31, 77, 58, 0.09) 0%, transparent 70%);
+  --orb-2: radial-gradient(ellipse 50% 60% at 85% 75%, rgba(168, 224, 112, 0.10) 0%, transparent 65%);
+  --orb-3: radial-gradient(ellipse 40% 40% at 60% 10%, rgba(31, 77, 58, 0.06) 0%, transparent 60%);
 }
 
 @theme inline {
@@ -46,33 +48,38 @@
   --color-ink-foreground: var(--ink-foreground);
   --color-danger: var(--danger);
   --color-success: var(--success);
-  --font-sans: var(--font-inter);
-  --font-display: var(--font-anton);
-  --font-serif: var(--font-serif);
+  --font-sans: var(--font-geist), system-ui, sans-serif;
+  --font-mono: var(--font-geist-mono), ui-monospace, monospace;
   --radius-card: var(--radius);
 }
 
-/* Tailwind 4 defaults borders to currentColor; use the theme border everywhere instead */
+/* Tailwind 4 defaults borders to currentColor; override with theme border */
 @layer base {
   *, ::before, ::after { border-color: var(--border); }
   ::selection { background: var(--highlight); color: var(--highlight-foreground); }
 }
 
 body {
-  background: var(--background);
+  background-color: var(--background);
+  /* Layered mesh gradient — inspired by modern dashboard references */
+  background-image: var(--orb-1), var(--orb-2), var(--orb-3);
+  background-attachment: fixed;
   color: var(--foreground);
-  font-family: var(--font-inter), system-ui, sans-serif;
+  font-family: var(--font-sans);
 }
 
-/* Striped fill (uses the element's text color) */
+/* Card glass shimmer on hover — subtle lift */
+.card-hover {
+  transition: box-shadow 0.18s ease, transform 0.18s ease;
+}
+.card-hover:hover {
+  box-shadow: 0 4px 20px rgba(0,0,0,0.07);
+  transform: translateY(-1px);
+}
+
+/* Striped fill */
 .stripes {
   background-image: repeating-linear-gradient(-45deg, currentColor 0 4px, transparent 4px 9px);
-}
-
-/* Outline text used by the hero slider intro */
-.text-outline {
-  color: transparent;
-  -webkit-text-stroke: 1.5px rgba(255, 255, 255, 0.55);
 }
 
 @keyframes spin-slow { to { transform: rotate(360deg); } }
@@ -85,4 +92,5 @@ body {
 @media (prefers-reduced-motion: reduce) {
   .animate-spin-slow { animation: none; }
   [data-marquee-track] { animation: none !important; }
+  body { background-image: none; }
 }
