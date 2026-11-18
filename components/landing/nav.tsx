@@ -36,7 +36,7 @@ export function Nav() {
           <Wordmark />
         </Link>
 
-        <nav aria-label="Primary" className="hidden items-center gap-9 md:flex">
+        <nav aria-label="Primary" className="hidden items-center gap-9 lg:flex">
           {links.map((l) => (
             <a key={l.href} href={l.href} className="text-[15px] font-medium text-ink underline-offset-[6px] hover:underline">
               {l.label}
@@ -50,7 +50,7 @@ export function Nav() {
           </Link>
           <button
             type="button"
-            className="inline-flex size-11 items-center justify-center rounded-full border border-ink/20 text-ink md:hidden"
+            className="inline-flex size-11 items-center justify-center rounded-full border border-ink/20 text-ink lg:hidden"
             aria-expanded={open}
             aria-controls="mobile-menu"
             aria-label={open ? "Close menu" : "Open menu"}
@@ -64,7 +64,7 @@ export function Nav() {
       </div>
 
       {open && (
-        <div id="mobile-menu" className="border-t border-ink/10 bg-paper md:hidden">
+        <div id="mobile-menu" className="border-t border-ink/10 bg-paper lg:hidden">
           <nav aria-label="Mobile" className={`${wrap} flex flex-col py-4`}>
             {links.map((l) => (
               <a key={l.href} href={l.href} onClick={() => setOpen(false)} className="border-b border-ink/10 py-4 font-serif text-2xl font-bold text-ink">
