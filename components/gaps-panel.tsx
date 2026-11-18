@@ -70,13 +70,13 @@ function GapRow({ g, onSession }: { g: Gap; onSession: (s: unknown) => void }) {
           onKeyDown={(e) => e.key === "Enter" && send("value")}
           inputMode={g.kind === "number" ? "decimal" : "text"}
           placeholder={g.kind === "number" ? "e.g. 240" : "type the answer"}
-          className="min-w-0 flex-1 rounded-lg border border-border bg-background px-3 py-1.5 text-sm outline-none focus:border-accent focus:ring-2 focus:ring-accent/10 transition"
+          className="min-w-0 flex-1 rounded-lg border border-border bg-background px-3 py-1.5 text-sm outline-none focus:border-teal focus:ring-2 focus:ring-teal/10 transition"
           aria-label={g.question}
         />
         <button
           onClick={() => send("value")}
           disabled={busy || !value.trim()}
-          className="rounded-lg bg-accent px-3 py-1.5 text-sm font-medium text-accent-foreground disabled:opacity-40 hover:bg-accent/90 active:scale-[0.98] transition-all"
+          className="rounded-lg bg-teal px-3 py-1.5 text-sm font-medium text-white disabled:opacity-40 hover:bg-teal/90 active:scale-[0.98] transition-all"
         >
           {busy ? <Loader2 className="size-4 animate-spin" /> : "Answer"}
         </button>

@@ -36,13 +36,13 @@ export function StatCard({ label, value, prefix, suffix, decimals = 0, delta, de
       <div className="mt-2 flex items-end justify-between gap-2">
         {delta != null && (
           <span className="flex items-center gap-1 text-xs">
-            <span className={clsx("flex items-center font-medium", good ? "text-success" : "text-danger")}>
+            <span className={clsx("flex items-center font-medium", good ? "text-ink" : "text-danger")}>
               {up ? <ArrowUpRight className="size-3.5" /> : <ArrowDownRight className="size-3.5" />}{Math.abs(delta)}%
             </span>
             <span className="text-muted">{deltaLabel}</span>
           </span>
         )}
-        {trend && <Sparkline data={trend} color={good ? "var(--success)" : "var(--danger)"} />}
+        {trend && <Sparkline data={trend} color={good ? "var(--teal)" : "var(--danger)"} />}
       </div>
     </div>
   );

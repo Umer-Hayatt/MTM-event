@@ -96,12 +96,12 @@ export function DataTable<T>({
       <div className="flex flex-wrap items-center gap-3 p-4">
         {title && <h3 className="mr-auto text-base font-semibold">{title}</h3>}
         {searchable && (
-          <label className={clsx("flex w-full items-center gap-2 rounded-xl border border-border bg-background px-3 py-2 text-sm focus-within:border-accent sm:w-64", !title && "mr-auto")}>
+          <label className={clsx("flex w-full items-center gap-2 rounded-xl border border-border bg-background px-3 py-2 text-sm focus-within:border-teal sm:w-64", !title && "mr-auto")}>
             <Search className="size-4 text-muted" />
             <input value={query} onChange={(e) => { setQuery(e.target.value); setPage(0); }} placeholder={searchPlaceholder} className="min-w-0 flex-1 bg-transparent outline-none placeholder:text-muted" />
           </label>
         )}
-        {selectable && selected.size > 0 && <span className="rounded-lg bg-highlight/40 px-2.5 py-1 text-xs font-medium">{selected.size} selected</span>}
+        {selectable && selected.size > 0 && <span className="rounded-lg bg-mist/40 px-2.5 py-1 text-xs font-medium">{selected.size} selected</span>}
         {toolbar}
       </div>
 
@@ -141,7 +141,7 @@ export function DataTable<T>({
                     exit={{ opacity: 0 }}
                     transition={{ duration: 0.18 }}
                     onClick={() => onRowClick?.(row)}
-                    className={clsx("border-b border-border last:border-0 transition-colors", on ? "bg-highlight/20" : "hover:bg-surface/60", onRowClick && "cursor-pointer")}
+                    className={clsx("border-b border-border last:border-0 transition-colors", on ? "bg-mist/20" : "hover:bg-surface/60", onRowClick && "cursor-pointer")}
                   >
                     {selectable && (
                       <td className="py-3 pl-4" onClick={(e) => e.stopPropagation()}><Checkbox checked={on} onChange={() => toggleOne(id)} label="Select row" /></td>
@@ -177,7 +177,7 @@ export function DataTable<T>({
 function Checkbox({ checked, onChange, label }: { checked: boolean; onChange: () => void; label: string }) {
   return (
     <button role="checkbox" aria-checked={checked} aria-label={label} onClick={onChange}
-      className={clsx("grid size-4 place-items-center rounded border transition", checked ? "border-accent bg-accent text-accent-foreground" : "border-border bg-card hover:border-muted")}>
+      className={clsx("grid size-4 place-items-center rounded border transition", checked ? "border-teal bg-teal text-white" : "border-border bg-card hover:border-muted")}>
       {checked && <svg viewBox="0 0 12 12" className="size-2.5"><path d="M2.5 6.5 5 9l4.5-6" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" /></svg>}
     </button>
   );
@@ -186,11 +186,11 @@ function Checkbox({ checked, onChange, label }: { checked: boolean; onChange: ()
 /** Small status pill for table cells. */
 export function StatusPill({ tone, children }: { tone: "success" | "warning" | "danger" | "neutral" | "accent"; children: React.ReactNode }) {
   const t = {
-    success: "bg-success/12 text-success",
+    success: "bg-teal/12 text-ink",
     warning: "bg-amber-100 text-amber-800",
     danger: "bg-danger/10 text-danger",
     neutral: "bg-surface text-muted",
-    accent: "bg-accent/10 text-accent",
+    accent: "bg-teal/10 text-teal",
   }[tone];
   return <span className={clsx("inline-flex items-center gap-1.5 rounded-full px-2 py-0.5 text-xs font-medium", t)}><i className="size-1.5 rounded-full bg-current" />{children}</span>;
 }

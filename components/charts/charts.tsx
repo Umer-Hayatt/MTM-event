@@ -15,7 +15,7 @@ import clsx from "clsx";
 ---------------------------------------------------------------- */
 
 /** Series colors come from the theme, in this order. */
-export const CHART_COLORS = ["var(--accent)", "var(--highlight)", "#8c9a90", "var(--foreground)", "#d6dbd2"];
+export const CHART_COLORS = ["var(--teal)", "var(--mist)", "var(--ink)", "var(--foreground)", "var(--surface)"];
 
 export type Series = {
   key: string;
@@ -205,7 +205,7 @@ export function ChartCard({ title, value, delta, action, legend, children, class
           {value != null && (
             <p className="mt-1 flex items-baseline gap-2 text-2xl font-semibold tracking-tight">
               {value}
-              {delta != null && <span className={clsx("text-xs font-medium", delta >= 0 ? "text-success" : "text-danger")}>{delta >= 0 ? "+" : ""}{delta}%</span>}
+              {delta != null && <span className={clsx("text-xs font-medium", delta >= 0 ? "text-ink" : "text-danger")}>{delta >= 0 ? "+" : ""}{delta}%</span>}
             </p>
           )}
         </div>

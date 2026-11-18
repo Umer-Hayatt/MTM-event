@@ -65,7 +65,7 @@ export function AppShell({
               const on = id === active;
               return (
                 <li key={id} className="relative">
-                  {on && <motion.span layoutId="shell-active" className="absolute inset-0 rounded-xl bg-highlight/45" transition={{ type: "spring", stiffness: 400, damping: 35 }} />}
+                  {on && <motion.span layoutId="shell-active" className="absolute inset-0 rounded-xl bg-mist/45" transition={{ type: "spring", stiffness: 400, damping: 35 }} />}
                   <button
                     onClick={() => onPick(id)}
                     title={isCollapsed ? label : undefined}
@@ -77,7 +77,7 @@ export function AppShell({
                   >
                     <Icon className="size-[18px] shrink-0" strokeWidth={on ? 2.2 : 1.8} />
                     {!isCollapsed && <span className="flex-1 truncate text-left">{label}</span>}
-                    {!isCollapsed && badge != null && <span className="rounded-md bg-accent px-1.5 text-[11px] font-medium text-accent-foreground">{badge}</span>}
+                    {!isCollapsed && badge != null && <span className="rounded-md bg-teal px-1.5 text-[11px] font-medium text-white">{badge}</span>}
                   </button>
                 </li>
               );
@@ -110,7 +110,7 @@ export function AppShell({
       <AnimatePresence>
         {mobileOpen && (
           <>
-            <motion.div className="fixed inset-0 z-40 bg-ws-ink/40 lg:hidden" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} onClick={() => setMobileOpen(false)} />
+            <motion.div className="fixed inset-0 z-40 bg-ink/40 lg:hidden" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} onClick={() => setMobileOpen(false)} />
             <motion.aside
               className="fixed inset-y-0 left-0 z-50 flex w-72 flex-col gap-6 bg-card p-4 lg:hidden"
               initial={{ x: "-100%" }} animate={{ x: 0 }} exit={{ x: "-100%" }} transition={{ type: "spring", stiffness: 320, damping: 34 }}
@@ -129,7 +129,7 @@ export function AppShell({
       <div className="flex min-w-0 flex-1 flex-col gap-4">
         <header className="sticky top-3 z-30 flex items-center gap-3 rounded-2xl border border-border bg-card/90 p-2.5 backdrop-blur lg:top-4">
           <button onClick={() => setMobileOpen(true)} aria-label="Open menu" className="rounded-lg p-2 hover:bg-surface lg:hidden"><Menu className="size-5" /></button>
-          <label className="flex w-full max-w-xs items-center gap-2 rounded-xl border border-border bg-background px-3 py-2 text-sm focus-within:border-accent">
+          <label className="flex w-full max-w-xs items-center gap-2 rounded-xl border border-border bg-background px-3 py-2 text-sm focus-within:border-teal">
             <Search className="size-4 text-muted" />
             <input ref={searchRef} placeholder="Search" className="min-w-0 flex-1 bg-transparent outline-none placeholder:text-muted" />
             <kbd className="hidden rounded border border-border px-1.5 text-[10px] text-muted sm:block">Ctrl K</kbd>
@@ -141,7 +141,7 @@ export function AppShell({
             </button>
             {user && (
               <div className="flex items-center gap-2 pl-1">
-                <span className="grid size-9 place-items-center rounded-full bg-accent text-xs font-semibold text-accent-foreground">
+                <span className="grid size-9 place-items-center rounded-full bg-teal text-xs font-semibold text-white">
                   {user.name.split(" ").map((p) => p[0]).join("").slice(0, 2)}
                 </span>
                 <div className="hidden leading-tight md:block">
@@ -169,10 +169,10 @@ export function SidebarPromo({ title, body, cta, onClick }: { title: string; bod
   const [hidden, setHidden] = useState(false);
   if (hidden) return null;
   return (
-    <div className="rounded-2xl bg-accent p-4 text-accent-foreground">
+    <div className="rounded-2xl bg-teal p-4 text-white">
       <div className="flex items-start justify-between gap-2 text-sm font-semibold">{title}<button aria-label="Dismiss" onClick={() => setHidden(true)}><X className="size-4 opacity-70" /></button></div>
       <p className="mt-2 text-xs opacity-75">{body}</p>
-      <button onClick={onClick} className="mt-3 rounded-lg bg-highlight px-3 py-1.5 text-xs font-semibold text-highlight-foreground">{cta}</button>
+      <button onClick={onClick} className="mt-3 rounded-lg bg-mist px-3 py-1.5 text-xs font-semibold text-ink">{cta}</button>
     </div>
   );
 }

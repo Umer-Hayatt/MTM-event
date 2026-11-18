@@ -1,6 +1,6 @@
 # Convene design system
 
-This document covers the landing page (`/`) and the tokens it introduced. The workspace (`/app`) still uses the previous styling (forest green, lime, Geist-era look) and will be migrated to these tokens in a second pass. Only the global font changed for the workspace (DM Sans now replaces Geist).
+This document covers the design system shared by the landing page (`/`) and the workspace (`/app`). Both read the same four colors and two fonts.
 
 Principle: the page should look like the product. Calm, precise, auditable. Real photography, real product content, tabular numbers, no decoration without meaning.
 
@@ -17,7 +17,7 @@ Four colors. Tints come from opacity or mixing these, nothing else.
 
 Semantic status color, used only inside product mockups: `--status-rejected` `#B4432F` (Rejected pill). Accepted uses Teal.
 
-Tailwind theme names: `ink`, `teal`, `mist`, `paper`, `rejected`. The workspace's old dark surface utility was renamed `ws-ink` so the names do not collide.
+Tailwind theme names: `ink`, `teal`, `mist`, `paper`, `rejected`. The workspace reads the same palette through semantic names (`background`, `foreground`, `card`, `surface`, `muted`, `border`, `danger`) mapped onto it in `app/globals.css`. The old `--accent`, `--highlight`, `--success` and `--ws-ink` variables are gone.
 
 Distribution on the landing page: Paper page and nav, deep blue hero panel (Ink to Teal), Ink audit band, Teal CTA band, Mist wash behind "How it works", bento and cards alternating Mist, Ink, Teal and white.
 
@@ -74,7 +74,7 @@ One row on Ink with a hairline on top: the links Privacy, Terms and Conditions, 
 
 ## Sample plan header
 
-The "Sample plan" pill sits on its own line. Below it is a row: below 1024px everything stacks (pill, heading, description, button). From 1024px it has two columns with `align-items: end`: the heading on the left, and on the right the line "Budget, schedule and checks, all built from eight sample messages." (max 360px, 16px) with the "Try it with your own messages" button 12px under it. The button's bottom edge sits on the heading's last baseline (the right block gets bottom padding of 0.167 of the heading size, via the `--h2` variable on `.sample-head`), and the right block never rises above the top of the heading. The heading is at least 56px from 1024px up so this holds at every width. No button row between the header and the cards.
+The "Sample plan" pill sits on its own line. Below it is a row: below 1024px everything stacks (pill, heading, description, button). From 1024px the row is a two-column grid with `align-items: end`. The first column is sized to the heading, `11 x` the heading font size (`--h2`), so "What a finished plan" stays on line one at 1440 and 1280 with a natural wrap (below 1280 it wraps as "What a finished / plan looks like."). The second column is at most 420px and holds the line "Budget, schedule and checks, all built from eight sample messages." with the "Try it with your own messages" button 12px under it. The two columns are packed together with a 72px gap, so the space between the heading text and the right block stays under about 120px at every width (measured 95, 94 and 87px at 1440, 1280 and 1024). The button's bottom edge sits on the heading's last baseline (the right block gets bottom padding of 0.167 of the heading size), and the right block never rises above the top of the heading. The heading is at least 56px from 1024px up. No button row between the header and the cards.
 
 ## CTA band visual
 
@@ -136,6 +136,33 @@ Plain, specific, honest. State what the product does and show it. Sentence case.
 - Centered-everything layouts, uniform spacing without hierarchy, every card the same size, decoration with no meaning.
 - Stock component-library looks. Everything is composed from the tokens above.
 
-## Next step
+## Workspace
 
-Restyle the workspace screens (`app/app/page.tsx`, `components/*`) with these tokens, then retire the old `--accent`, `--highlight`, `--background` family in `app/globals.css`.
+The workspace (`app/app/page.tsx`, `components/globe.tsx`) uses the same palette, fonts, radii and shadow as the landing page. Only visuals and animation wiring changed; handlers, state, API calls and meaningful text are untouched. The older components under `components/app`, `components/charts`, `components/report`, `components/trace` and friends are not used by `/app`; their color classes were renamed to the new tokens so nothing references the removed variables.
+
+Shell
+- Sidebar: Ink background, the Convene mark and "Inbox → Plan" in Libre Baskerville 700 (Paper), "Back to site" in Mist. "New plan" is a Teal pill (Mist while that screen is open). Nav items are Paper at 80% with the active item a Mist pill with Ink text; the red count badge is the rejected status color. Download links are Paper at 80%. The "AI used" line sits at the bottom in Mist under a hairline. Space for the download links is always reserved so the footer never shifts when a plan loads.
+- Top bar: white, hairline bottom border, page title in DM Sans 600. The "Questions for you" button is an Ink pill with a Mist count badge.
+- Mobile (below 768px): the sidebar becomes a horizontally scrolling Ink bar with the same pill styling.
+- Main: Paper background, content max 896px.
+
+Cards and type
+- Cards are white, 20px radius (32px for the overview hero), one soft Ink-tinted shadow, no border. Highlights use Mist panels. Stat tiles alternate Ink, white, Teal and Mist so the row is not four identical cards.
+- Page titles and the overview headline use Libre Baskerville 700. Everything else is DM Sans: 600 for card titles and buttons, 400 body, tabular-nums on every number. The only monospace is the raw model input and output inside an open AI call.
+- Large numbers (budget percentage, stat values, ring percentage) are Teal. Small text is Ink or the muted tone (Ink at 72% over Paper, 6.5:1). Small text is never Teal on Paper.
+
+Buttons and controls
+- Primary: Teal with white text, hover Ink. Disabled: Mist background with Ink text at 70% (about 5:1), not grey. Secondary: outlined Ink pill. Tabs: Ink pill when active, white when not.
+- The paste box shows its focus ring on the card (2px Teal ring) instead of on the textarea. Inputs use a Teal border and ring on focus. Every other control uses a 2px Teal outline (Mist on the Ink sidebar), set under `.ws` in `globals.css`.
+- Status chips: used is Mist with Ink text, not used is the rejected red on a light red tint, replaced and ignored are the pale Mist surface with muted text. The "Message N" source chips are Mist and turn Teal on hover.
+
+Charts
+- Schedule bars: Teal for build, Ink for judging, Mist for meals and breaks, 50% Teal for opening and closing, on a pale Mist track. Budget and line-item bars are Teal on a Mist track and turn the rejected red when over budget. The budget ring is Teal on a Mist track.
+
+States
+- Empty states are a pale Mist surface panel with centered muted text. The infeasible banner and failed checks use a red border on a white card. TBA values are muted text. "Planning…" is the disabled Mist button with a spinner and `aria-busy`. The drawer shows open, answered (Mist chip) and TBA (pale chip) questions.
+- The new-plan globe is drawn in Teal with a Mist orbit ring and a Teal point, smaller on mobile.
+
+Motion
+- Uses the landing page's `Reveal` and timing tokens. Cards fade and rise 12px when a screen opens (stagger up to about 400ms), the overview ring and the budget and schedule bars draw once with the shared `--shown` approach (`stroke-dashoffset` and `scaleX`), and switching screens is a 150ms crossfade. The drawer slides in over 300ms with the shared ease. Only transform, opacity and stroke-dashoffset animate, nothing waits on an animation, and `prefers-reduced-motion` shows the final state at once.
+- Measured with mock data: CLS 0.0000 at 1440 and 390, and text contrast with no failures below 4.5:1 (3:1 for large text) on all five result screens.

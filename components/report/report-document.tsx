@@ -33,9 +33,9 @@ function Chart({ s }: { s: Extract<ReportSection, { type: "chart" }> }) {
 }
 
 const TONES = {
-  info: { icon: Info, box: "border-border bg-surface", iconCls: "text-accent", label: "Note" },
+  info: { icon: Info, box: "border-border bg-surface", iconCls: "text-teal", label: "Note" },
   warn: { icon: AlertTriangle, box: "border-danger/40 bg-danger/10", iconCls: "text-danger", label: "Attention" },
-  success: { icon: CheckCircle2, box: "border-success/40 bg-success/10", iconCls: "text-success", label: "On track" },
+  success: { icon: CheckCircle2, box: "border-teal/40 bg-teal/10", iconCls: "text-ink", label: "On track" },
 } as const;
 
 function Section({ s }: { s: ReportSection }) {
@@ -118,7 +118,7 @@ function Section({ s }: { s: ReportSection }) {
           <ol className="space-y-2.5">
             {s.items.map((c) => (
               <li key={c.n} className="flex gap-3 text-xs leading-relaxed">
-                <span className="mt-0.5 grid size-5 shrink-0 place-items-center rounded-full bg-ws-ink text-[10px] font-medium tabular-nums text-ws-ink-foreground">{c.n}</span>
+                <span className="mt-0.5 grid size-5 shrink-0 place-items-center rounded-full bg-ink text-[10px] font-medium tabular-nums text-paper">{c.n}</span>
                 <div>
                   <p className="font-medium">{c.source}</p>
                   <p className="text-muted">{c.excerpt}</p>
@@ -135,7 +135,7 @@ function Section({ s }: { s: ReportSection }) {
 export function ReportDocument({ report }: { report: Report }) {
   return (
     <article className="report-doc mx-auto w-[210mm] max-w-full space-y-6 rounded-2xl border border-border bg-card p-[14mm] text-foreground">
-      <header className="report-section border-b-2 border-ws-ink pb-5">
+      <header className="report-section border-b-2 border-ink pb-5">
         <p className="mb-2 text-[11px] uppercase tracking-[0.2em] text-muted">Report</p>
         <h1 className="font-display text-4xl uppercase leading-none tracking-wide">{report.title}</h1>
         {report.subtitle && <p className="mt-2 font-serif text-xl text-muted">{report.subtitle}</p>}

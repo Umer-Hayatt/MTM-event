@@ -27,9 +27,9 @@ const KIND: Record<TraceEvent["kind"], { icon: LucideIcon; label: string }> = {
 };
 
 const BUBBLE: Record<TraceEvent["status"], string> = {
-  running: "bg-accent/10 text-accent",
-  ok: "bg-success/10 text-success",
-  warn: "bg-highlight text-highlight-foreground",
+  running: "bg-teal/10 text-teal",
+  ok: "bg-teal/10 text-ink",
+  warn: "bg-mist text-ink",
   error: "bg-danger/10 text-danger",
 };
 
@@ -100,7 +100,7 @@ export function TracePanel({ events, title = "Reasoning trace", compact = false,
             {events.length > 0 && (
               <span className={clsx(
                 "inline-flex shrink-0 items-center gap-1.5 rounded-full px-2.5 py-0.5 text-xs font-medium",
-                running ? "bg-accent/10 text-accent" : "bg-surface text-muted",
+                running ? "bg-teal/10 text-teal" : "bg-surface text-muted",
               )}>
                 {running && <PulseDot />}
                 {running ? "Live" : finished && totals.errors === 0 ? "Complete" : "Finished with errors"}
@@ -116,7 +116,7 @@ export function TracePanel({ events, title = "Reasoning trace", compact = false,
                 aria-controls={`${viewId}-${v}`}
                 onClick={() => setView(v)}
                 className={clsx(
-                  "flex items-center gap-1.5 rounded-[10px] px-2.5 py-1.5 text-xs font-medium transition focus-visible:outline-2 focus-visible:outline-offset-1 focus-visible:outline-accent",
+                  "flex items-center gap-1.5 rounded-[10px] px-2.5 py-1.5 text-xs font-medium transition focus-visible:outline-2 focus-visible:outline-offset-1 focus-visible:outline-teal",
                   view === v ? "bg-card text-foreground shadow-sm" : "text-muted hover:text-foreground",
                 )}
               >
@@ -153,7 +153,7 @@ export function TracePanel({ events, title = "Reasoning trace", compact = false,
         </div>
 
         {hasError && finished && totals.retries > 0 && (
-          <p className="border-t border-border bg-highlight/30 px-5 py-2.5 text-xs text-foreground">
+          <p className="border-t border-border bg-mist/30 px-5 py-2.5 text-xs text-foreground">
             Recovered: {totals.errors} failed {totals.errors === 1 ? "step" : "steps"} handled by {totals.retries} retry/fallback {totals.retries === 1 ? "action" : "actions"}.
           </p>
         )}
@@ -168,8 +168,8 @@ function PulseDot() {
   const reduce = useReducedMotion();
   return (
     <span className="relative flex size-2" aria-hidden>
-      {!reduce && <span className="absolute inset-0 animate-ping rounded-full bg-accent opacity-60" />}
-      <span className="relative size-2 rounded-full bg-accent" />
+      {!reduce && <span className="absolute inset-0 animate-ping rounded-full bg-teal opacity-60" />}
+      <span className="relative size-2 rounded-full bg-teal" />
     </span>
   );
 }
@@ -192,9 +192,9 @@ function SummaryStrip({ totals, compact, running }: { totals: ReturnType<typeof 
             <dt className="truncate text-[10px] font-medium uppercase tracking-wider text-muted">{c.label}</dt>
             <dd className={clsx("mt-0.5 font-semibold tabular-nums tracking-tight", compact ? "text-sm" : "text-lg")}>
               {flagged ? (
-                <span className="rounded-md bg-highlight px-1.5 text-highlight-foreground">{c.value}</span>
+                <span className="rounded-md bg-mist px-1.5 text-ink">{c.value}</span>
               ) : (
-                <span className={c.accent ? "text-accent" : undefined}>{c.value}</span>
+                <span className={c.accent ? "text-teal" : undefined}>{c.value}</span>
               )}
             </dd>
           </div>
@@ -228,7 +228,7 @@ function TraceRow({ node, now, t0, open, toggle, compact }: {
         aria-controls={hasBody ? panelId : undefined}
         onClick={() => hasBody && toggle(e.id)}
         className={clsx(
-          "group flex w-full items-center gap-3 rounded-xl px-2 text-left transition focus-visible:outline-2 focus-visible:outline-offset-0 focus-visible:outline-accent",
+          "group flex w-full items-center gap-3 rounded-xl px-2 text-left transition focus-visible:outline-2 focus-visible:outline-offset-0 focus-visible:outline-teal",
           compact ? "py-1.5" : "py-2",
           hasBody ? "cursor-pointer hover:bg-surface" : "cursor-default",
           expanded && "bg-surface",
@@ -253,7 +253,7 @@ function TraceRow({ node, now, t0, open, toggle, compact }: {
         <StatusChip status={e.status} />
         <span className={clsx(
           "w-16 shrink-0 text-right text-xs tabular-nums",
-          e.status === "running" ? "font-medium text-accent" : e.status === "error" ? "text-danger" : "text-muted",
+          e.status === "running" ? "font-medium text-teal" : e.status === "error" ? "text-danger" : "text-muted",
         )}>
           {formatDuration(dur)}
         </span>
@@ -297,7 +297,7 @@ function RunningRing() {
   return (
     <motion.span
       aria-hidden
-      className="pointer-events-none absolute -inset-0.5 rounded-[10px] border-2 border-accent"
+      className="pointer-events-none absolute -inset-0.5 rounded-[10px] border-2 border-teal"
       animate={reduce ? { opacity: 0.6 } : { opacity: [0.7, 0.1, 0.7], scale: [1, 1.12, 1] }}
       transition={reduce ? undefined : { duration: 1.4, repeat: Infinity, ease: "easeInOut" }}
     />
@@ -309,9 +309,9 @@ function StatusChip({ status }: { status: TraceEvent["status"] }) {
   return (
     <span className={clsx(
       "hidden shrink-0 items-center gap-1 rounded-full px-2 py-0.5 text-[11px] font-medium sm:inline-flex",
-      status === "ok" && "text-success",
-      status === "running" && "text-accent",
-      status === "warn" && "bg-highlight text-highlight-foreground",
+      status === "ok" && "text-ink",
+      status === "running" && "text-teal",
+      status === "warn" && "bg-mist text-ink",
       status === "error" && "bg-danger/10 text-danger",
     )}>
       {status === "ok" && <Check className="size-3" aria-hidden />}
@@ -346,7 +346,7 @@ function TraceDetail({ event: e, t0, dur, compact }: { event: TraceEvent; t0: nu
         <pre
           tabIndex={0}
           aria-label={`Data for ${e.label}`}
-          className="max-h-56 overflow-auto rounded-xl bg-ws-ink p-3 font-mono text-[11px] leading-relaxed text-ws-ink-foreground focus-visible:outline-2 focus-visible:outline-accent"
+          className="max-h-56 overflow-auto rounded-xl bg-ink p-3 font-mono text-[11px] leading-relaxed text-paper focus-visible:outline-2 focus-visible:outline-teal"
         >
           {safeJson(e.data)}
         </pre>

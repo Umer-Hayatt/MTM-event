@@ -1,39 +1,24 @@
 @import "tailwindcss";
 
-/* ---------------------------------------------------------------
-   ONE THEME. Every component reads these tokens.
-   accent     = primary actions, active states, charts series 1
-   highlight  = bright secondary (badges on dark, series 2)
-   ink        = dark sections
----------------------------------------------------------------- */
+/* One theme: the four palette colors below, read by the landing page and the workspace. */
 :root {
-  --background: #f0f2ee;
-  --foreground: #111412;
-  --card: #ffffff;
-  --surface: #e8ebe4;
-  --muted: #5e6660;
-  --border: #dde0d8;
-
-  --accent: #1f4d3a;
-  --accent-foreground: #ffffff;
-  --highlight: #a8e070;
-  --highlight-foreground: #0d1f0c;
-
-  --ws-ink: #0f1311;
-  --ws-ink-foreground: #f2f4ef;
-
-  --danger: #c93b28;
-  --success: #1a8f4c;
-
-  --radius: 14px;
-
-  /* ---- Landing design system (see DESIGN.md) ---- */
+  /* One palette for the landing page and the workspace. See DESIGN.md. */
   --ink: #071B2B;
   --teal: #167D8D;
   --mist: #B9E4E8;
   --paper: #EEEEEE;
   --status-rejected: #B4432F;
 
+  /* Semantic names the workspace reads, mapped onto the palette. */
+  --background: var(--paper);
+  --foreground: var(--ink);
+  --card: #ffffff;
+  --surface: color-mix(in srgb, var(--mist) 38%, var(--paper));
+  --muted: color-mix(in srgb, var(--ink) 72%, var(--paper));
+  --border: rgb(7 27 43 / 0.12);
+  --danger: var(--status-rejected);
+
+  --radius: 14px;
   --r-sm: 10px;
   --r-card: 20px;
   --r-panel: 32px;
@@ -47,20 +32,13 @@
   --color-surface: var(--surface);
   --color-muted: var(--muted);
   --color-border: var(--border);
-  --color-accent: var(--accent);
-  --color-accent-foreground: var(--accent-foreground);
-  --color-highlight: var(--highlight);
-  --color-highlight-foreground: var(--highlight-foreground);
-  --color-ws-ink: var(--ws-ink);
-  --color-ws-ink-foreground: var(--ws-ink-foreground);
   --color-ink: var(--ink);
   --color-teal: var(--teal);
   --color-mist: var(--mist);
   --color-paper: var(--paper);
   --color-rejected: var(--status-rejected);
-  --font-serif: var(--font-baskerville), Georgia, serif;
   --color-danger: var(--danger);
-  --color-success: var(--success);
+  --font-serif: var(--font-baskerville), Georgia, serif;
   --font-sans: var(--font-dm-sans), system-ui, sans-serif;
   --font-mono: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
   --radius-card: var(--radius);
@@ -69,7 +47,7 @@
 /* Tailwind 4 defaults borders to currentColor; override with theme border */
 @layer base {
   *, ::before, ::after { border-color: var(--border); }
-  ::selection { background: var(--highlight); color: var(--highlight-foreground); }
+  ::selection { background: var(--mist); color: var(--ink); }
 }
 
 body {
@@ -132,6 +110,10 @@ body {
 html { scroll-behavior: smooth; scroll-padding-top: 88px; }
 .landing :focus-visible { outline: 2px solid var(--teal); outline-offset: 3px; border-radius: 6px; }
 .landing .on-dark :focus-visible { outline-color: var(--mist); }
+/* Workspace focus rings. The paste box shows its ring on the card (focus-within) instead. */
+.ws :focus-visible { outline: 2px solid var(--teal); outline-offset: 2px; border-radius: 8px; }
+.ws .on-dark :focus-visible, .ws.on-dark :focus-visible { outline-color: var(--mist); }
+.ws textarea:focus-visible { outline: none; }
 .tnum { font-variant-numeric: tabular-nums; }
 
 @keyframes spin-slow { to { transform: rotate(360deg); } }

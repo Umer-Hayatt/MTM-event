@@ -7,9 +7,9 @@ import { useNow } from "./use-now";
 import type { TraceEvent } from "./types";
 
 const BAR: Record<TraceEvent["status"], string> = {
-  running: "bg-accent/35 text-accent stripes",
-  ok: "bg-accent",
-  warn: "bg-highlight",
+  running: "bg-teal/35 text-teal stripes",
+  ok: "bg-teal",
+  warn: "bg-mist",
   error: "bg-danger",
 };
 

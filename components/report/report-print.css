@@ -19,7 +19,7 @@
 }
 
 @media print {
-  html, body { background: #fff !important; color: #111412 !important; height: auto !important; min-height: 0 !important; }
+  html, body { background: #fff !important; color: #071B2B !important; height: auto !important; min-height: 0 !important; }
   body { color-scheme: light; }
   body > *:not(.report-print-root) { display: none !important; }
 
@@ -39,7 +39,7 @@
     border-radius: 0 !important;
     box-shadow: none !important;
     background: #fff !important;
-    color: #111412 !important;
+    color: #071B2B !important;
     /* keep tinted fills (callouts, table stripes, chart colors) */
     -webkit-print-color-adjust: exact;
     print-color-adjust: exact;

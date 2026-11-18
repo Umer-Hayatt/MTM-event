@@ -49,7 +49,7 @@ export function ExportMenu({ report, rows, filenameBase, className }: {
         aria-haspopup="menu"
         aria-expanded={open}
         onClick={() => setOpen((o) => !o)}
-        className="inline-flex items-center gap-2 rounded-xl bg-accent px-4 py-2.5 text-sm font-medium text-accent-foreground transition hover:opacity-90"
+        className="inline-flex items-center gap-2 rounded-xl bg-teal px-4 py-2.5 text-sm font-medium text-white transition hover:opacity-90"
       >
         <Download className="size-4" aria-hidden />
         Export report

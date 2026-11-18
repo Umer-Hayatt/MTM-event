@@ -21,7 +21,7 @@ export function NumberTicker({ value, decimals = 0, prefix = "", suffix = "", du
 }
 
 /** Tiny line chart with dots + soft area fill; draws itself in. */
-export function Sparkline({ data, color = "var(--accent)", width = 80, height = 36, dots = true }: { data: number[]; color?: string; width?: number; height?: number; dots?: boolean }) {
+export function Sparkline({ data, color = "var(--teal)", width = 80, height = 36, dots = true }: { data: number[]; color?: string; width?: number; height?: number; dots?: boolean }) {
   const min = Math.min(...data), max = Math.max(...data);
   const pts = data.map((d, i) => [(i / (data.length - 1)) * (width - 6) + 3, height - 4 - ((d - min) / (max - min || 1)) * (height - 8)]);
   const line = pts.map((p, i) => `${i ? "L" : "M"}${p[0]},${p[1]}`).join(" ");
@@ -44,9 +44,9 @@ export function Card({ className, children }: { className?: string; children: Re
 /** Pill status badge. */
 export function Badge({ tone = "neutral", children }: { tone?: "green" | "orange" | "blue" | "red" | "neutral"; children: React.ReactNode }) {
   const tones = {
-    green: "bg-success/12 text-success",
+    green: "bg-teal/12 text-ink",
     orange: "bg-orange-100 text-orange-700",
-    blue: "bg-accent/10 text-accent",
+    blue: "bg-teal/10 text-teal",
     red: "bg-danger/10 text-danger",
     neutral: "bg-surface text-muted",
   };

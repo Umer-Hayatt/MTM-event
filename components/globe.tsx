@@ -17,8 +17,10 @@ export function Globe({ className }: { className?: string }) {
     if (!canvas || !ctx) return;
 
     const css = getComputedStyle(document.documentElement);
-    const line = css.getPropertyValue("--accent").trim() || "#1f4d3a";
-    const dot = css.getPropertyValue("--highlight").trim() || "#a8e070";
+    const line = css.getPropertyValue("--teal").trim() || "#167D8D";
+    const ringColor = css.getPropertyValue("--mist").trim() || "#B9E4E8";
+    const dot = css.getPropertyValue("--teal").trim() || "#167D8D";
+    const paper = css.getPropertyValue("--paper").trim() || "#EEEEEE";
     const still = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
     let w = 0, h = 0, raf = 0, visible = true;
@@ -90,8 +92,8 @@ export function Globe({ className }: { className?: string }) {
       }
 
       // Orbit ring around the globe with one moving point on it.
-      const ring = ease((t - 0.6) / 1.2);
-      if (ring > 0) {
+      const ringT = ease((t - 0.6) / 1.2);
+      if (ringT > 0) {
         const pts = [];
         for (let i = 0; i <= 96; i++) {
           const u = (i / 96) * 2 * Math.PI;
@@ -101,19 +103,19 @@ export function Globe({ className }: { className?: string }) {
           const y = y1 * Math.cos(TILT) - z1 * Math.sin(TILT), z = y1 * Math.sin(TILT) + z1 * Math.cos(TILT);
           pts.push({ x: x0, y, z });
         }
-        ctx.strokeStyle = line;
-        const keep = Math.round(pts.length * ring);
-        stroke(pts.slice(0, Math.max(2, keep)), 0.55);
+        ctx.strokeStyle = ringColor;
+        const keep = Math.round(pts.length * ringT);
+        stroke(pts.slice(0, Math.max(2, keep)), 1, 2);
 
         const u = t * 0.5 + 1;
         const x0 = 1.28 * Math.cos(u), z0 = 1.28 * Math.sin(u);
         const tl = 0.9;
         const y1 = -z0 * Math.sin(tl), z1 = z0 * Math.cos(tl);
         const y = y1 * Math.cos(TILT) - z1 * Math.sin(TILT);
-        ctx.globalAlpha = ring;
+        ctx.globalAlpha = ringT;
         ctx.fillStyle = dot;
         ctx.beginPath(); ctx.arc(cx + x0 * R, cy - y * R, 5, 0, 2 * Math.PI); ctx.fill();
-        ctx.strokeStyle = line; ctx.lineWidth = 1.5; ctx.globalAlpha = ring; ctx.stroke();
+        ctx.strokeStyle = paper; ctx.lineWidth = 2; ctx.globalAlpha = ringT; ctx.stroke();
       }
 
       // Poles.
