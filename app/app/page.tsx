@@ -162,6 +162,7 @@ export default function Page() {
 
             {/* mobile nav */}
             <div className="flex gap-1 overflow-x-auto border-b border-border bg-surface p-2 md:hidden">
+              <Link href="/" className="shrink-0 rounded-lg px-3 py-1.5 text-sm text-muted">← Site</Link>
               {[{ id: "new" as View, label: "New plan" }, ...(has ? nav : [])].map((n) => (
                 <button key={n.id} onClick={() => setView(n.id)} className={clsx("shrink-0 rounded-lg px-3 py-1.5 text-sm", view === n.id ? "bg-card font-medium" : "text-muted")}>{n.label}</button>
               ))}
