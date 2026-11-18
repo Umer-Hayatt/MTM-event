@@ -22,7 +22,9 @@ export type Session = {
 
 export type RunResult = Session & { mode: "fresh" | "update"; modeReason: string; runTokens: { input: number; output: number; total: number; calls: number }; grandTotal: number };
 
-const ROOT = process.cwd();
+// Vercel functions can only write under /tmp (ephemeral, per instance).
+export const DATA_ROOT = process.env.VERCEL ? "/tmp/mtm" : process.cwd();
+const ROOT = DATA_ROOT;
 const STATE = join(ROOT, "state");
 const OUT = join(ROOT, "out");
 const SESSION = join(STATE, "session.json");
