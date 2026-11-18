@@ -32,7 +32,7 @@ export function Pill({ children, tone = "line" }: { children: ReactNode; tone?: 
     rejected: "bg-rejected text-white",
     paper: "bg-paper text-ink",
   } as const;
-  return <span className={`inline-flex items-center rounded-full px-3 py-1 text-xs font-medium leading-none ${tones[tone]}`}>{children}</span>;
+  return <span className={`inline-flex items-center whitespace-nowrap rounded-full px-3 py-1 text-xs font-medium leading-none ${tones[tone]}`}>{children}</span>;
 }
 
 export function MsgChip({ n, dark = false }: { n: number; dark?: boolean }) {

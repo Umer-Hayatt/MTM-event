@@ -18,14 +18,19 @@ export function SamplePlan() {
   return (
     <section id="sample-plan" aria-labelledby="sample-title" className="scroll-mt-20 py-24 md:py-32">
       <div className={wrap}>
-        <div className="max-w-[640px]">
-          <Pill tone="mist">Sample plan</Pill>
-          <h2 id="sample-title" className="mt-5 font-serif text-[clamp(2.25rem,4.4vw,3.75rem)] font-bold leading-[1.02] tracking-[-0.02em] text-ink">
-            What a finished plan looks like.
-          </h2>
-          <Link href="/app" className="mt-7 inline-flex items-center rounded-full bg-teal px-7 py-3.5 text-base font-semibold text-white transition hover:bg-ink">
-            Try it with your own messages
-          </Link>
+        <div className="grid gap-6 lg:grid-cols-2 lg:items-end lg:gap-12">
+          <div>
+            <Pill tone="mist">Sample plan</Pill>
+            <h2 id="sample-title" className="mt-5 font-serif text-[clamp(2.25rem,4.4vw,3.75rem)] font-bold leading-[1.02] tracking-[-0.02em] text-ink">
+              What a finished plan looks like.
+            </h2>
+          </div>
+          <div className="lg:justify-self-end lg:pb-1">
+            <p className="max-w-[360px] text-[17px] leading-relaxed text-ink">Budget, schedule and checks, all built from eight sample messages.</p>
+            <Link href="/app" className="mt-5 inline-flex items-center rounded-full bg-teal px-7 py-3.5 text-base font-semibold text-white transition hover:bg-ink">
+              Try it with your own messages
+            </Link>
+          </div>
         </div>
 
         <div className="mt-14 grid gap-5 lg:grid-cols-12">

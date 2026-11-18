@@ -70,11 +70,19 @@ The hero panel (32px radius, inset 24px from the page edge, full bleed on mobile
 
 ## Footer
 
-One row of anchor links (How it works, Audit, Sample plan) on Ink. Nothing else: no wordmark, no description, no buttons, no photo credits line. Sample data is labeled where it appears (hero cards, bento chart, sample plan section) rather than in the footer. The page order is nav, hero (with the bento row overlapping its bottom edge), how it works, audit, sample plan, CTA band, footer. There is no separate problem section.
+One row on Ink with a hairline on top: the links Privacy, Terms and Conditions, Help and Contact on the left, and "© 2026 Convene" on the right (stacked under the links on mobile). No wordmark, no description, no buttons, no photo credits line. The four links point at `/privacy`, `/terms`, `/help` and `/contact`; those pages are not built yet, so they currently 404. Sample data is labeled where it appears (hero cards, bento chart, sample plan section) rather than in the footer. The page order is nav, hero (with the bento row overlapping its bottom edge), how it works, audit, sample plan, CTA band, footer. There is no separate problem section.
+
+## Sample plan header
+
+Below 1024px: pill, heading, a one-line description, then the "Try it with your own messages" button, stacked. From 1024px: two columns aligned to the bottom. Left is the pill and heading. Right is the line "Budget, schedule and checks, all built from eight sample messages." (max 360px) with the button directly under it. No button row between the header and the cards.
+
+## CTA band visual
+
+The Teal band is two columns from 1024px: text and the "Open workspace" button on the left (button directly under the paragraph), a composed visual on the right (`cta-visual.tsx`). It reuses the hero's `MessageCard` and `RejectedCard`: the Roman Urdu card (chip "Replaces Msg 3", because message 4 supersedes message 3) and the rejected caterer card, both labeled Sample, offset and rotated at most 1.5 degrees. Two 2px Mist lines run from them into a white "Current plan" card (Rs 597,400, a small 92% ring at its top right, chip "Sources: Msg 1, 2, 4 to 7"). Faint Mist contour circles sit behind. The lines are Mist, not Teal, because the band itself is Teal. Entrance is a fade with an 8px rise (`.rise-sm`), disabled under reduced motion. Below 1024px the visual stacks under the text; at 390 only the first message card and the plan card show.
 
 ## Components (`components/landing/`)
 
-`nav` (sticky, transparent then Paper blur on scroll, drawer on mobile), `hero`, `product-cluster` (plan card with budget ring, message card, rejected card, trace chip, scroll ring), `bento-stats`, `how-it-works`, `audit-band`, `sample-plan`, `cta-band`, `footer`, plus `ui` (wordmark and mark, pills, message chips, ring, arrows, `SAMPLE` data) and `blur` (generated placeholders).
+`nav` (sticky, transparent then Paper blur on scroll, drawer on mobile), `hero`, `product-cluster` (plan card with budget ring, message card, rejected card, trace chip, scroll ring), `bento-stats`, `how-it-works`, `audit-band`, `sample-plan`, `cta-band`, `cta-visual`, `footer`, plus `ui` (wordmark and mark, pills, message chips, ring, arrows, `SAMPLE` data) and `blur` (generated placeholders).
 
 All product visuals are HTML, CSS and SVG. Sample figures come from `samples/sample_pack.txt` (177 people, Hall A, Rs 597,400 of Rs 650,000, 17 judges, 6 checks) and are always labeled "Sample plan" or "Sample". The trace token counts other than "Call 1 · 2,413" are illustrative.
 

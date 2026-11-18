@@ -1,12 +1,13 @@
 import Link from "next/link";
 import { Arrow, wrap } from "./ui";
+import { CtaVisual } from "./cta-visual";
 
 export function CtaBand() {
   return (
-    <section aria-labelledby="cta-title" className="bg-teal py-20 text-white md:py-28">
-      <div className={wrap}>
-        <div className="max-w-[760px]">
-          <h2 id="cta-title" className="font-serif text-[clamp(2.5rem,5.6vw,5rem)] font-bold leading-[1] tracking-[-0.025em]">
+    <section aria-labelledby="cta-title" className="overflow-hidden bg-teal py-20 text-white md:py-28">
+      <div className={`${wrap} grid items-center gap-14 lg:grid-cols-[minmax(0,1fr)_minmax(0,1.05fr)] lg:gap-10`}>
+        <div className="max-w-[560px]">
+          <h2 id="cta-title" className="font-serif text-[clamp(2.5rem,4.2vw,3.75rem)] font-bold leading-[1.06] tracking-[-0.025em]">
             Bring your messiest thread.
           </h2>
           <p className="mt-5 max-w-[520px] text-[17px] leading-relaxed text-white">
@@ -17,6 +18,7 @@ export function CtaBand() {
             <Arrow className="size-4 transition-transform group-hover:translate-x-0.5" />
           </Link>
         </div>
+        <CtaVisual />
       </div>
     </section>
   );

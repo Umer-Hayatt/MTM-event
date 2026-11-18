@@ -1,3 +1,4 @@
+import type { ReactNode } from "react";
 import { Arrow, Check, Pill, Ring, SAMPLE, rs } from "./ui";
 
 /* Floating product cards. Real HTML/CSS/SVG, sample data from the bundled sample pack. */
@@ -35,12 +36,12 @@ function PlanCard() {
   );
 }
 
-function MessageCard() {
+export function MessageCard({ chip = <Pill tone="mist">Accepted</Pill> }: { chip?: ReactNode }) {
   return (
     <div className={`${card} lift w-full`}>
-      <div className="flex items-center justify-between">
+      <div className="flex flex-wrap items-center justify-between gap-2">
         <div><p className="text-[11px] font-medium uppercase tracking-[0.08em] text-ink/70">Sample</p><p className="text-[13px] font-medium text-ink">Caterer · WhatsApp</p></div>
-        <Pill tone="mist">Accepted</Pill>
+        {chip}
       </div>
       <p className="mt-3 text-[15px] leading-snug text-ink">
         &ldquo;Salam bhai! Standard lunch box ab Rs 1,200 per head hoga...&rdquo;
@@ -53,7 +54,7 @@ function MessageCard() {
   );
 }
 
-function RejectedCard() {
+export function RejectedCard() {
   return (
     <div className={`${card} lift w-full`}>
       <div className="flex items-center justify-between">
