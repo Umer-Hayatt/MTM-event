@@ -27,10 +27,6 @@
 
   --radius: 14px;
 
-  /* Mesh gradient orb positions */
-  --orb-1: radial-gradient(ellipse 60% 50% at 15% 20%, rgba(31, 77, 58, 0.09) 0%, transparent 70%);
-  --orb-2: radial-gradient(ellipse 50% 60% at 85% 75%, rgba(168, 224, 112, 0.10) 0%, transparent 65%);
-  --orb-3: radial-gradient(ellipse 40% 40% at 60% 10%, rgba(31, 77, 58, 0.06) 0%, transparent 60%);
 }
 
 @theme inline {
@@ -61,9 +57,6 @@
 
 body {
   background-color: var(--background);
-  /* Layered mesh gradient — inspired by modern dashboard references */
-  background-image: var(--orb-1), var(--orb-2), var(--orb-3);
-  background-attachment: fixed;
   color: var(--foreground);
   font-family: var(--font-sans);
 }
@@ -92,5 +85,4 @@ body {
 @media (prefers-reduced-motion: reduce) {
   .animate-spin-slow { animation: none; }
   [data-marquee-track] { animation: none !important; }
-  body { background-image: none; }
 }
