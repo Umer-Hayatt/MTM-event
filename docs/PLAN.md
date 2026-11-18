@@ -1,0 +1,26 @@
+# Plan: hackathon finish (2026-11-18)
+
+**Final push by 13:15. Code freeze at 13:25. Test run at 13:30.**
+
+## Done
+- [x] Planner core: split, reader, ledger, solver, schedule, validator, trace, CLI (`92111f5`)
+- [x] Web UI (inbox, plan, trace) on the same `run()` (`fa75865`)
+- [x] Fix: `node plan.ts` crashed on Node 24 strip-only mode (parameter properties in `trace.ts` and `llm.ts`)
+- [x] Docs: PRD, ARCHITECTURE, PLAN
+
+## In order
+1. [ ] **Live run.** This needs a `gsk_` Groq key in `.env`. `node plan.ts samples/sample_pack.txt` should give 177 people, Hall A, Rs 547,400, and Rs 597,400 with the DJ.
+2. [ ] **Practice messages.** `practice_change.txt` should be ACCEPTED (+5,000 on the printing item). `practice_wrong.txt` should be REJECTED (derived key `food.boxes`).
+3. [ ] **Tune `SYSTEM`** in `reader.ts`, but only if the 8B model extracts something wrong. Keep the prompt short, with no pack facts.
+4. [ ] **Custom pack** `samples/custom_pack.txt`, covering wheelchair access (`has`), end by 17:00 and a food spend cap. Add solver tests that use invented numbers.
+5. [ ] **Ship.** Screenshot the UI after a real run, then `npm test` and `tsc`. Commit and push, check `git status` is clean, and record the hash. Save `out/plan.md` and `out/trace.txt` for the upload form.
+
+## Rules (disqualification-level)
+- Pack facts and messages never go into code or prompts.
+- Token counts come only from the API's `usage` field, and failed calls are logged.
+- Keys never go into `.env.example`.
+
+## Agent split (keep token use low)
+- **Main session:** live runs, reader tuning, commit and push. These steps need the conversation context.
+- **`executor` (Sonnet), in the background:** the custom pack, registry targets and tests.
+- Skip review and critic agents unless time remains after step 5.

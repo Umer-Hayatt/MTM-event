@@ -5,7 +5,8 @@ import type { Area, TraceCall, TraceLine } from "./types.ts";
 export class Trace {
   lines: TraceLine[] = [];
   /** Call numbering continues across updates within a session. */
-  constructor(public nextN = 1) {}
+  nextN: number;
+  constructor(nextN = 1) { this.nextN = nextN; }
 
   log(text: string) {
     this.lines.push({ kind: "log", text });

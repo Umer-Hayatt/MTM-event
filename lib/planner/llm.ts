@@ -17,7 +17,8 @@ const TIMEOUT_MS = 20_000;
 
 export class CallBudget {
   used = 0;
-  constructor(public max: number) {}
+  max: number;
+  constructor(max: number) { this.max = max; }
   take(): boolean {
     if (this.used >= this.max) return false;
     this.used++;
