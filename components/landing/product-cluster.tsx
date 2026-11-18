@@ -39,7 +39,7 @@ function MessageCard() {
   return (
     <div className={`${card} lift w-full`}>
       <div className="flex items-center justify-between">
-        <p className="text-[13px] font-medium text-ink">Caterer · WhatsApp</p>
+        <div><p className="text-[11px] font-medium uppercase tracking-[0.08em] text-ink/70">Sample</p><p className="text-[13px] font-medium text-ink">Caterer · WhatsApp</p></div>
         <Pill tone="mist">Accepted</Pill>
       </div>
       <p className="mt-3 text-[15px] leading-snug text-ink">
@@ -57,7 +57,7 @@ function RejectedCard() {
   return (
     <div className={`${card} lift w-full`}>
       <div className="flex items-center justify-between">
-        <p className="text-[13px] font-medium text-ink">Caterer · Practice message</p>
+        <div><p className="text-[11px] font-medium uppercase tracking-[0.08em] text-ink/70">Sample</p><p className="text-[13px] font-medium text-ink">Caterer · Practice message</p></div>
         <Pill tone="rejected">Rejected</Pill>
       </div>
       <p className="mt-3 text-[15px] leading-snug text-ink">
@@ -70,20 +70,24 @@ function RejectedCard() {
   );
 }
 
+function TraceChip() {
+  return (
+    <span className="tnum inline-flex items-center gap-2 rounded-full bg-ink px-4 py-2 text-[13px] font-medium text-paper shadow-[0_10px_28px_-10px_rgb(7_27_43/0.5)] ring-1 ring-mist/40">
+      <span className="size-1.5 rounded-full bg-mist" aria-hidden="true" />
+      Call 1 · 2,413 tokens <span className="text-mist">sample</span>
+    </span>
+  );
+}
+
 export function ProductCluster() {
   return (
     <>
       {/* Desktop: overlapping composition */}
-      <div className="relative hidden h-[640px] xl:block" aria-label="Sample product cards">
+      <div className="relative hidden h-[680px] xl:block" aria-label="Sample product cards">
         <div className="rise absolute right-2 top-0 w-[338px]" style={{ "--i": 4 } as React.CSSProperties}><PlanCard /></div>
-        <div className="rise absolute left-0 top-[262px] w-[308px]" style={{ "--i": 5 } as React.CSSProperties}><MessageCard /></div>
-        <div className="rise absolute right-[-8px] top-[426px] w-[300px]" style={{ "--i": 6 } as React.CSSProperties}><RejectedCard /></div>
-        <div className="rise absolute left-6 top-[188px]" style={{ "--i": 7 } as React.CSSProperties}>
-          <span className="tnum inline-flex items-center gap-2 rounded-full bg-ink px-4 py-2 text-[13px] font-medium text-paper shadow-[0_10px_28px_-10px_rgb(7_27_43/0.5)]">
-            <span className="size-1.5 rounded-full bg-mist" aria-hidden="true" />
-            Call 1 · 2,413 tokens <span className="text-mist/80">sample</span>
-          </span>
-        </div>
+        <div className="rise absolute left-0 top-[298px] w-[308px]" style={{ "--i": 5 } as React.CSSProperties}><MessageCard /></div>
+        <div className="rise absolute right-[-8px] top-[478px] w-[300px]" style={{ "--i": 6 } as React.CSSProperties}><RejectedCard /></div>
+        <div className="rise absolute left-0 top-[246px]" style={{ "--i": 7 } as React.CSSProperties}><TraceChip /></div>
         <a href="#sample-plan" aria-label="Scroll to the sample plan" className="rise group absolute bottom-4 left-6 flex size-[68px] items-center justify-center rounded-full bg-paper text-ink shadow-[0_10px_28px_-10px_rgb(7_27_43/0.4)]" style={{ "--i": 8 } as React.CSSProperties}>
           <svg viewBox="0 0 68 68" className="absolute inset-0 size-full -rotate-90" aria-hidden="true">
             <circle cx="34" cy="34" r="30" fill="none" stroke="var(--mist)" strokeWidth="3" />
@@ -98,6 +102,7 @@ export function ProductCluster() {
         <div className="rise" style={{ "--i": 4 } as React.CSSProperties}><PlanCard /></div>
         <div className="rise ml-6 sm:ml-16" style={{ "--i": 5 } as React.CSSProperties}><MessageCard /></div>
         <div className="rise mr-6 hidden sm:block sm:mr-16" style={{ "--i": 6 } as React.CSSProperties}><RejectedCard /></div>
+        <div className="rise self-start" style={{ "--i": 7 } as React.CSSProperties}><TraceChip /></div>
       </div>
     </>
   );
