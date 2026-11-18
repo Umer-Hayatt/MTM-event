@@ -9,7 +9,8 @@ import {
   Inbox as InboxIcon, Loader2, Send, UtensilsCrossed, Wallet, XCircle, Cpu,
 } from "lucide-react";
 import { StatCard } from "@/components/app/stat-card";
-import type { MessageRecord, Plan, TraceCall, TraceLine } from "@/lib/planner/types";
+import { GapsPanel } from "@/components/gaps-panel";
+import type { Gap, MessageRecord, Plan, TraceCall, TraceLine } from "@/lib/planner/types";
 
 type Session = {
   messages: MessageRecord[];
@@ -17,6 +18,7 @@ type Session = {
   infeasible?: string;
   trace: TraceLine[];
   runs: { mode: string; at: string; calls: number; tokens: number }[];
+  gaps?: Gap[];
   mode?: string;
   modeReason?: string;
   error?: string;
@@ -109,6 +111,8 @@ export default function Page() {
             <div><b>Could not plan the latest input.</b> {s.infeasible} {p && "The last valid plan is still shown."}</div>
           </div>
         )}
+
+        <GapsPanel gaps={s?.gaps ?? []} onSession={(d) => setS(d as Session)} />
 
         {p && (
           <section className="grid grid-cols-2 gap-3 lg:grid-cols-5">

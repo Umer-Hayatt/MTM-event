@@ -1,31 +1,41 @@
 // The solver: plain arithmetic + enumerate-and-rank. No model calls.
 // Builds every hall x food option x subset of optional requests, drops any that break a hard rule or the budget,
 // then ranks the rest by policy. Greedy picking can miss the valid plan; enumeration cannot (inputs are tiny).
-import { MAX_REQUESTS_ENUMERATED, POLICY_TEXT } from "./policy.ts";
+import { GAP_POLICY_TEXT, MAX_REQUESTS_ENUMERATED, POLICY_TEXT } from "./policy.ts";
+import { makeGap } from "./gaps.ts";
 import { buildSchedule, fmtClock, toMin, type ScheduleResult } from "./schedule.ts";
 import { validate } from "./validator.ts";
-import type { Constraint, FactState, Option, Plan } from "./types.ts";
+import type { Constraint, FactState, Gap, Option, Plan } from "./types.ts";
 
-export type SolveResult = { ok: true; plan: Plan; log: string[] } | { ok: false; reason: string; log: string[] };
+export type SolveResult = { ok: true; plan: Plan; log: string[]; gaps: Gap[] } | { ok: false; reason: string; log: string[]; gaps: Gap[] };
 
 type Candidate = { venue: Option; food: Option; extras: { item: string; cost: number }[]; total: number; failures: string[] };
 
 export function solve(st: FactState): SolveResult {
   const log: string[] = [];
-  const missing = (what: string): SolveResult => ({ ok: false, reason: `cannot plan: ${what} not stated in any accepted message`, log });
+  const gaps: Gap[] = [];
+  const tba: string[] = [];
+  const fail = (reason: string): SolveResult => ({ ok: false, reason, log, gaps });
+  const missing = (what: string): SolveResult => fail(`cannot plan: ${what} not stated in any accepted message`);
+  /** Human in the loop: record the gap, mark the section TBA, keep planning. */
+  const gap = (key: string, section: string) => {
+    gaps.push(makeGap(key));
+    if (!tba.includes(section)) tba.push(section);
+    log.push(`POLICY: ${key} missing -> ${section} TBA (${GAP_POLICY_TEXT})`);
+  };
 
   // --- people & judging (pure arithmetic) ---
   const students = Number(st.event.students) || 0;
   const teamSize = Number(st.event.team_size) || 0;
   const teams = Number(st.event.teams) || (students && teamSize ? Math.ceil(students / teamSize) : 0);
-  if (!students && !teams) return missing("number of students/teams");
+  if (!students && !teams) { gaps.push(makeGap("event.students")); return missing("number of students/teams"); }
   const maxTeams = st.judge.max_teams || 0;
   const minPerTeam = st.judge.min_per_team || 0;
   const judgesNeeded = maxTeams ? Math.ceil(teams / maxTeams) : 0;
-  if (!maxTeams) log.push("WARN: no 'max teams per judge' stated; judges needed cannot be derived");
+  if (!maxTeams) gap("judge.max_teams", "judging");
   const confirmed = st.judge.confirmed;
   if (confirmed !== undefined && judgesNeeded > confirmed) {
-    return { ok: false, reason: `needs ${judgesNeeded} judges (ceil(${teams} teams / ${maxTeams} per judge)) but only ${confirmed} confirmed`, log };
+    return fail(`needs ${judgesNeeded} judges (ceil(${teams} teams / ${maxTeams} per judge)) but only ${confirmed} confirmed`);
   }
   const fee = st.judge.fee || 0;
   const judgeCost = judgesNeeded * fee;
@@ -39,12 +49,20 @@ export function solve(st: FactState): SolveResult {
 
   // --- schedule (independent of venue/food choice) ---
   const judgingBlock = (maxTeams || 0) * minPerTeam;
-  const foods = Object.values(st.foods).filter((f) => isFinite(f.price));
-  const venues = Object.values(st.venues).filter((v) => isFinite(v.price));
-  if (!venues.length) return missing("any venue option with a price");
-  if (!foods.length) return missing("any food option with a price");
-  const sched = buildSchedule(st, judgingBlock, true);
-  if (sched.error) return { ok: false, reason: `schedule: ${sched.error}`, log };
+  const placeholder = (name: string): Option => ({ name, price: 0, attrs: [], source: 0, tba: true });
+  let foods = Object.values(st.foods).filter((f) => isFinite(f.price));
+  let venues = Object.values(st.venues).filter((v) => isFinite(v.price));
+  if (!venues.length) { gap("venue.option", "venue"); venues = [placeholder("TBA")]; }
+  if (!foods.length) { gap("food.option", "food"); foods = [placeholder("TBA")]; }
+  if (!Number(st.event.budget)) gap("event.budget", "budget");
+  let sched: ScheduleResult;
+  if (!Number(st.event.duration_min)) {
+    gap("event.duration_min", "schedule");
+    sched = { blocks: [], lengthMin: 0, relative: true, notes: ["schedule TBA: event length not stated yet"] };
+  } else {
+    sched = buildSchedule(st, judgingBlock, true);
+    if (sched.error) return fail(`schedule: ${sched.error}`);
+  }
   log.push(`POLICY: ${POLICY_TEXT[4]}`);
 
   // --- money that does not depend on the choice ---
@@ -65,11 +83,12 @@ export function solve(st: FactState): SolveResult {
     const foodCost = food.price * headcount;
     const total = venue.price + foodCost + fixed + extras.reduce((s, e) => s + e.cost, 0);
     const failures: string[] = [];
-    if (venue.seats === undefined) failures.push(`${venue.name}: seating unknown`);
+    if (venue.tba) { /* seats unknown until the organiser answers */ }
+    else if (venue.seats === undefined) failures.push(`${venue.name}: seating unknown`);
     else if (venue.seats < headcount) failures.push(`${venue.name} seats ${venue.seats} < headcount ${headcount}`);
     if (total > cap) failures.push(`total ${total} > budget ${cap}`);
     const ctx = { venue, food, foodCost, total, cap, judgesNeeded, judgeCost, headcount, sched };
-    for (const c of st.constraints.filter((c) => c.hard)) {
+    for (const c of st.constraints.filter((c) => c.hard && !tba.includes(sectionOf(c.target)))) {
       const r = checkConstraint(c, ctx);
       if (r === "unhandled") unhandled.add(`${c.area}: ${c.text ?? `${c.target} ${c.op} ${JSON.stringify(c.value)}`} (msg ${c.source})`);
       else if (r !== true) failures.push(r);
@@ -82,7 +101,7 @@ export function solve(st: FactState): SolveResult {
     const counts = new Map<string, number>();
     for (const c of cands) for (const f of c.failures) counts.set(f.replace(/^[^:]+: /, ""), (counts.get(f) ?? 0) + 1);
     const nearest = [...cands].sort((a, b) => a.failures.length - b.failures.length || a.total - b.total)[0];
-    return { ok: false, reason: `no valid plan among ${cands.length} options; closest (${nearest.venue.name} + ${nearest.food.name}) fails: ${nearest.failures.join("; ")}`, log };
+    return fail(`no valid plan among ${cands.length} options; closest (${nearest.venue.name} + ${nearest.food.name}) fails: ${nearest.failures.join("; ")}`);
   }
 
   // --- rank (policy) ---
@@ -125,11 +144,20 @@ export function solve(st: FactState): SolveResult {
     checks: [],
     unhandled: [...unhandled],
     ranking,
+    tba,
   };
   plan.checks = validate(plan, st);
   const failed = plan.checks.filter((c) => !c.ok);
-  if (failed.length) return { ok: false, reason: `validator: ${failed.map((c) => `${c.name}: ${c.detail}`).join("; ")}`, log };
-  return { ok: true, plan, log };
+  if (failed.length) return fail(`validator: ${failed.map((c) => `${c.name}: ${c.detail}`).join("; ")}`);
+  return { ok: true, plan, log, gaps };
+}
+
+/** Which plan section a constraint target belongs to (so TBA sections skip their constraints). */
+function sectionOf(target: string): string {
+  const t = target.toLowerCase();
+  if (t.startsWith("judge")) return "judging";
+  if (t.startsWith("budget")) return "budget";
+  return t.split(".")[0];
 }
 
 // ---- constraint registry: the values code can compute for a candidate ----
