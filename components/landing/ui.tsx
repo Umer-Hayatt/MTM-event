@@ -97,4 +97,14 @@ export const SAMPLE = {
   checks: ["Figures", "Within budget", "Venue fits", "Schedule valid", "Enough judges", "All areas covered"],
 } as const;
 
+/* Schedule blocks of the 4-hour sample event (minutes). Shared by the landing Sample plan and the workspace preview. */
+export const SAMPLE_BLOCKS = [
+  { label: "Opening", min: 10, cls: "bg-ink text-paper" },
+  { label: "Build", min: 125, cls: "bg-teal text-white" },
+  { label: "Lunch", min: 30, cls: "bg-mist text-ink" },
+  { label: "Judging", min: 45, cls: "bg-ink text-paper" },
+  { label: "Prayer", min: 15, cls: "bg-mist text-ink" },
+  { label: "Closing", min: 15, cls: "bg-ink text-paper" },
+] as const;
+
 export const rs = (n: number) => `Rs ${n.toLocaleString("en-US")}`;

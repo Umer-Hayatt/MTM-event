@@ -138,11 +138,11 @@ Plain, specific, honest. State what the product does and show it. Sentence case.
 
 ## Workspace
 
-The workspace (`app/app/page.tsx`, `components/globe.tsx`) uses the same palette, fonts, radii and shadow as the landing page. Only visuals and animation wiring changed; handlers, state, API calls and meaningful text are untouched. The older components under `components/app`, `components/charts`, `components/report`, `components/trace` and friends are not used by `/app`; their color classes were renamed to the new tokens so nothing references the removed variables.
+The workspace (`app/app/page.tsx`, `components/landing/plan-preview.tsx`) uses the same palette, fonts, radii and shadow as the landing page. Only visuals and animation wiring changed; handlers, state, API calls and meaningful text are untouched. The older components under `components/app`, `components/charts`, `components/report`, `components/trace` and friends are not used by `/app`; their color classes were renamed to the new tokens so nothing references the removed variables.
 
 Shell
-- Sidebar: Ink background, the Convene mark and "Inbox → Plan" in Libre Baskerville 700 (Paper), "Back to site" in Mist. "New plan" is a Teal pill (Mist while that screen is open). Nav items are Paper at 80% with the active item a Mist pill with Ink text; the red count badge is the rejected status color. Download links are Paper at 80%. The "AI used" line sits at the bottom in Mist under a hairline. Space for the download links is always reserved so the footer never shifts when a plan loads.
-- Top bar: white, hairline bottom border, page title in DM Sans 600. The "Questions for you" button is an Ink pill with a Mist count badge.
+- Sidebar: Ink background, the Convene mark and "Inbox → Plan" in Libre Baskerville 700 (Paper), "Back to site" is an outlined pill (40px, 1px Mist border at 40%, Paper text in DM Sans 500, a 2px-stroke inline SVG arrow) the same width as "New plan" and 12px above it; on hover (pointer devices only) it fills Mist with Ink text over 200ms, and its focus ring is a 2px Paper outline with offset. The mobile bar uses the same pill, labelled "Back to site". "New plan" is a Teal pill (Mist while that screen is open). Nav items are Paper at 80% with the active item a Mist pill with Ink text; the red count badge is the rejected status color. Download links are Paper at 80%. The "AI used" line sits at the bottom in Mist under a hairline. Space for the download links is always reserved so the footer never shifts when a plan loads.
+- Top bar: white, hairline bottom border, 80px tall (64px below 768px). The screen title is Libre Baskerville 700 in Ink at 26px (24px below 768px), the same on every screen and always smaller than the heading in the main area. The "Questions for you" button is an Ink pill with a Mist count badge.
 - Mobile (below 768px): the sidebar becomes a horizontally scrolling Ink bar with the same pill styling.
 - Main: Paper background, content max 896px.
 
@@ -153,6 +153,7 @@ Cards and type
 
 Buttons and controls
 - Primary: Teal with white text, hover Ink. Disabled: Mist background with Ink text at 70% (about 5:1), not grey. Secondary: outlined Ink pill. Tabs: Ink pill when active, white when not.
+- The paste card is a structured input tool: white body, 2px Mist border, 20px radius, the soft shadow, and a 2px Teal ring on `:focus-within`. A row of format hints (WhatsApp, Email, Memo, Urdu, Roman Urdu) sits at the top as small Mist-at-40% pills in DM Sans 500; they are plain `span`s, `aria-hidden`, with no hover, pointer cursor or focus. An attached-file chip sits below that row. The textarea is transparent with no inner border. The bottom action strip is full width, Mist at 40% with a hairline Mist top border and the card's bottom corners, holding "Attach files" (left) and "Make the plan" (right). The disabled "Make the plan" keeps the Mist fill and Ink at 70% text (5.6:1) and adds a 1px inset Ink ring so it does not blend into the strip. At 390px the hints wrap to two lines and both controls stay on one row.
 - The paste box shows its focus ring on the card (2px Teal ring) instead of on the textarea. Inputs use a Teal border and ring on focus. Every other control uses a 2px Teal outline (Mist on the Ink sidebar), set under `.ws` in `globals.css`.
 - Status chips: used is Mist with Ink text, not used is the rejected red on a light red tint, replaced and ignored are the pale Mist surface with muted text. The "Message N" source chips are Mist and turn Teal on hover.
 
@@ -161,7 +162,7 @@ Charts
 
 States
 - Empty states are a pale Mist surface panel with centered muted text. The infeasible banner and failed checks use a red border on a white card. TBA values are muted text. "Planning…" is the disabled Mist button with a spinner and `aria-busy`. The drawer shows open, answered (Mist chip) and TBA (pale chip) questions.
-- The new-plan globe is drawn in Teal with a Mist orbit ring and a Teal point, smaller on mobile.
+- The new-plan page has a quiet "what you will get" preview on the right (`components/landing/plan-preview.tsx`): one white 20px card at 90% opacity with a "Sample" label, a 92% Teal-on-Mist ring, "Rs 597,400 of 650,000", "6 of 6 checks" and a six-bar schedule strip, with a plain Mist rounded rectangle peeking out 14px behind it. It reuses `Ring`, `SAMPLE` and `SAMPLE_BLOCKS` from the landing page. It is decorative: `aria-hidden`, nothing focusable, no hover lift. Full size from 1280px, 224px wide from 1024 to 1279px, hidden below 1024px so the paste card takes the full width.
 
 Motion
 - Uses the landing page's `Reveal` and timing tokens. Cards fade and rise 12px when a screen opens (stagger up to about 400ms), the overview ring and the budget and schedule bars draw once with the shared `--shown` approach (`stroke-dashoffset` and `scaleX`), and switching screens is a 150ms crossfade. The drawer slides in over 300ms with the shared ease. Only transform, opacity and stroke-dashoffset animate, nothing waits on an animation, and `prefers-reduced-motion` shows the final state at once.

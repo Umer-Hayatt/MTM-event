@@ -1,18 +1,10 @@
 import Link from "next/link";
-import { Check, MsgChip, Pill, Ring, SAMPLE, rs, wrap } from "./ui";
+import { Check, MsgChip, Pill, Ring, SAMPLE, SAMPLE_BLOCKS as blocks, rs, wrap } from "./ui";
 import { CountUp } from "./count-up";
 import { Reveal } from "./reveal";
 
 // 4-hour event, 240 min. Opening 10, lunch 30, closing 15, prayer break 15 (from the pack),
-// judging 45 (3 teams at 15 min), build absorbs the rest.
-const blocks = [
-  { label: "Opening", min: 10, cls: "bg-ink text-paper" },
-  { label: "Build", min: 125, cls: "bg-teal text-white" },
-  { label: "Lunch", min: 30, cls: "bg-mist text-ink" },
-  { label: "Judging", min: 45, cls: "bg-ink text-paper" },
-  { label: "Prayer", min: 15, cls: "bg-mist text-ink" },
-  { label: "Closing", min: 15, cls: "bg-ink text-paper" },
-];
+// judging 45 (3 teams at 15 min), build absorbs the rest. The blocks live in ./ui (SAMPLE_BLOCKS).
 const TOTAL = 240;
 const BUILD = 125;
 

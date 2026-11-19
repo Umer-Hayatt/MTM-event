@@ -7,7 +7,7 @@ import clsx from "clsx";
 import Link from "next/link";
 import { AnimatePresence, MotionConfig, motion } from "motion/react";
 import { ArrowUp, ChevronDown, Download, FileText, Loader2, Paperclip, Plus, X } from "lucide-react";
-import { Globe } from "@/components/globe";
+import { PlanPreview } from "@/components/landing/plan-preview";
 import { Reveal } from "@/components/landing/reveal";
 import { Wordmark } from "@/components/landing/ui";
 import type { MessageRecord, MessageStatus, Plan, Role, TraceCall, TraceLine } from "@/lib/planner/types";
@@ -123,9 +123,9 @@ export default function Page() {
             <div className="px-3 pb-1 pt-2">
               <Wordmark />
             </div>
-            <Link href="/" className="mx-3 mt-1.5 text-xs text-mist underline underline-offset-2">← Back to site</Link>
+            <BackToSite className="mt-4 w-full" />
 
-            <button onClick={() => setView("new")} className={clsx("mt-5 flex items-center justify-center gap-2 rounded-full px-4 py-2.5 text-sm font-semibold transition", view === "new" ? "bg-mist text-ink" : "bg-teal text-white hover:bg-white hover:text-ink")}>
+            <button onClick={() => setView("new")} className={clsx("mt-3 flex items-center justify-center gap-2 rounded-full px-4 py-2.5 text-sm font-semibold transition", view === "new" ? "bg-mist text-ink" : "bg-teal text-white hover:bg-white hover:text-ink")}>
               <Plus className="size-4" />New plan
             </button>
 
@@ -151,8 +151,8 @@ export default function Page() {
 
           {/* ---------------- Main ---------------- */}
           <div className="flex min-w-0 flex-1 flex-col">
-            <header className="flex h-14 shrink-0 items-center justify-between border-b border-border bg-card px-5">
-              <h1 className="text-[15px] font-semibold">{title}</h1>
+            <header className="flex h-16 shrink-0 items-center justify-between border-b border-border bg-card px-5 md:h-20 md:px-8">
+              <h1 className="font-serif text-2xl font-bold leading-none tracking-[-0.01em] text-ink md:text-[26px]">{title}</h1>
               <div className="flex items-center gap-3">
                 {s?.mode && <span className="hidden text-xs text-muted sm:inline">{s.mode === "fresh" ? "Built a new plan" : "Updated the plan"}</span>}
                 {openGaps.length > 0 && (
@@ -165,8 +165,8 @@ export default function Page() {
             </header>
 
             {/* mobile nav */}
-            <div className="on-dark flex gap-1 overflow-x-auto bg-ink p-2 text-paper md:hidden">
-              <Link href="/" className="shrink-0 rounded-full px-3 py-1.5 text-sm text-mist">← Site</Link>
+            <div className="on-dark flex items-center gap-1 overflow-x-auto bg-ink p-2 text-paper md:hidden">
+              <BackToSite className="mr-1 shrink-0 px-4" />
               {[{ id: "new" as View, label: "New plan" }, ...(has ? nav : [])].map((n) => (
                 <button key={n.id} onClick={() => setView(n.id)} className={clsx("shrink-0 rounded-full px-3.5 py-1.5 text-sm", view === n.id ? "bg-mist font-semibold text-ink" : "text-paper/80")}>{n.label}</button>
               ))}
@@ -176,22 +176,28 @@ export default function Page() {
               <AnimatePresence mode="wait">
                 <motion.div key={view} initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: 0.15 }} className="h-full">
                   {view === "new" && (
-                    <div className="mx-auto grid min-h-full max-w-6xl items-center gap-4 px-6 py-8 lg:grid-cols-[minmax(0,34rem)_1fr] lg:gap-10">
-                      <div className="order-2 lg:order-1">
+                    <div className="mx-auto grid min-h-full max-w-6xl items-center gap-4 px-6 py-8 lg:grid-cols-[minmax(0,1fr)_14rem] lg:gap-6 xl:grid-cols-[minmax(0,34rem)_1fr] xl:gap-10">
+                      <div>
                         <Reveal y={12}>
                           <h2 className="font-serif text-[clamp(2rem,3.6vw,2.75rem)] font-bold leading-[1.05] tracking-[-0.02em]">Turn event messages into a plan</h2>
-                          <p className="mt-4 max-w-md text-muted">Paste the messages from your venue, caterer and organisers. You get a schedule, a budget and the reason behind every number.</p>
+                          <p className="mt-4 max-w-md text-muted">Venue, caterer and organisers all send updates. Convene keeps the latest of each in one plan.</p>
                         </Reveal>
 
                         <Reveal y={12} delay={100}>
                           <div
                             onDragOver={(e) => { e.preventDefault(); setDrag(true); }} onDragLeave={() => setDrag(false)}
                             onDrop={(e) => { e.preventDefault(); setDrag(false); addFiles(e.dataTransfer.files); }}
-                            className={clsx("mt-7 rounded-[20px] border bg-card p-3 shadow-[0_10px_30px_-16px_rgb(7_27_43/0.22),0_1px_2px_rgb(7_27_43/0.05)] transition focus-within:border-teal focus-within:ring-2 focus-within:ring-teal/40", drag ? "border-teal ring-2 ring-teal/40" : "border-border")}
+                            className={clsx("mt-7 overflow-hidden rounded-[20px] border-2 bg-card shadow-[0_10px_30px_-16px_rgb(7_27_43/0.22),0_1px_2px_rgb(7_27_43/0.05)] transition focus-within:border-teal focus-within:ring-2 focus-within:ring-teal/40", drag ? "border-teal ring-2 ring-teal/40" : "border-mist")}
                           >
+                            {/* Format hints only: not interactive, hidden from assistive tech. */}
+                            <div aria-hidden="true" className="flex cursor-default select-none flex-wrap gap-1.5 px-5 pt-4">
+                              {["WhatsApp", "Email", "Memo", "Urdu", "Roman Urdu"].map((h) => (
+                                <span key={h} className="rounded-full bg-mist/40 px-2.5 py-1 text-xs font-medium leading-none text-ink">{h}</span>
+                              ))}
+                            </div>
                             <AnimatePresence initial={false}>
                               {files.length > 0 && (
-                                <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="flex flex-wrap gap-2 px-1 pb-2">
+                                <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="flex flex-wrap gap-2 px-5 pt-3">
                                   {files.map((f, i) => (
                                     <motion.span key={f.name + i} initial={{ scale: 0.95, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} className="flex items-center gap-1.5 rounded-full bg-mist py-1 pl-3 pr-1.5 text-sm text-ink">
                                       <FileText className="size-3.5" />{f.name}
@@ -206,15 +212,15 @@ export default function Page() {
                               onKeyDown={(e) => { if (e.key === "Enter" && (e.metaKey || e.ctrlKey)) submit(); }}
                               aria-label="Event messages"
                               placeholder="Paste the messages here, or type one new message to update the current plan."
-                              className="block min-h-[150px] w-full resize-none bg-transparent p-2 text-[15px] outline-none placeholder:text-muted"
+                              className="block min-h-[150px] w-full resize-none border-0 bg-transparent px-5 py-4 text-[15px] outline-none placeholder:text-muted"
                             />
-                            <div className="flex items-center justify-between pt-1">
-                              <button onClick={() => fileRef.current?.click()} className="flex items-center gap-2 rounded-full px-3 py-1.5 text-sm text-ink transition hover:bg-surface">
+                            <div className="flex items-center justify-between gap-3 border-t border-mist bg-mist/40 px-3 py-2.5">
+                              <button onClick={() => fileRef.current?.click()} className="flex items-center gap-2 rounded-full px-3 py-2 text-sm text-ink transition hover:bg-white">
                                 <Paperclip className="size-4" />Attach files
                               </button>
                               <input ref={fileRef} type="file" multiple accept=".txt,.md,text/plain" hidden onChange={(e) => { addFiles(e.target.files); e.target.value = ""; }} />
                               <button onClick={submit} disabled={busy || (!text.trim() && !files.length)} aria-busy={busy}
-                                className={clsx("flex h-10 items-center gap-2 rounded-full px-5 text-sm font-semibold transition active:scale-95", primaryBtn)}>
+                                className={clsx("flex h-10 items-center gap-2 rounded-full px-5 text-sm font-semibold transition active:scale-95 disabled:ring-1 disabled:ring-inset disabled:ring-ink/30", primaryBtn)}>
                                 {busy ? <><Loader2 className="size-4 animate-spin" />Planning…</> : <>Make the plan<ArrowUp className="size-4" /></>}
                               </button>
                             </div>
@@ -224,9 +230,7 @@ export default function Page() {
                         </Reveal>
                       </div>
 
-                      <Reveal y={0} delay={200} className="order-1 mx-auto w-full max-w-[13rem] sm:max-w-[22rem] lg:order-2 lg:max-w-[30rem] lg:justify-self-center">
-                        <Globe className="aspect-square w-full" />
-                      </Reveal>
+                      <PlanPreview className="hidden w-full lg:block xl:max-w-[24rem] xl:justify-self-center" />
                     </div>
                   )}
 
@@ -279,7 +283,7 @@ function Overview({ s, openGaps, ask, go }: { s: Session; openGaps: number; ask:
               <span className={clsx("size-2.5 rounded-full", ready ? "bg-teal" : "bg-danger")} aria-hidden="true" />
               {ready ? (waiting ? "Plan ready, some parts still to be confirmed" : "Plan ready, every check passed") : `${failed.length} ${failed.length === 1 ? "problem" : "problems"} to fix`}
             </p>
-            <h2 className="mt-3 font-serif text-[clamp(1.6rem,2.6vw,2.2rem)] font-bold leading-[1.12] tracking-[-0.015em]">
+            <h2 className="mt-3 font-serif text-[clamp(1.75rem,2.6vw,2.2rem)] font-bold leading-[1.12] tracking-[-0.015em]">
               {tba("venue") ? "Venue to be confirmed" : p.venue.name} for {p.headcount.total} people
               {!tba("judging") && <>, with {p.judging.needed} judges</>}
             </h2>
@@ -624,6 +628,18 @@ function CallRow({ c }: { c: TraceCall }) {
 }
 
 /* ---------------- small pieces ---------------- */
+
+// Outlined pill link back to the landing page. Styles (hover fill, focus ring) live in globals.css.
+function BackToSite({ className }: { className?: string }) {
+  return (
+    <Link href="/" className={clsx("back-pill", className)}>
+      <svg viewBox="0 0 16 16" className="size-[1em] shrink-0" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+        <path d="M13.5 8h-11M7 3.5 2.5 8 7 12.5" />
+      </svg>
+      Back to site
+    </Link>
+  );
+}
 
 const Card = ({ title, right, delay = 0, children }: { title: string; right?: string; delay?: number; children: React.ReactNode }) => (
   <Reveal y={12} delay={delay}>

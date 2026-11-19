@@ -116,15 +116,23 @@ html { scroll-behavior: smooth; scroll-padding-top: 88px; }
 .ws textarea:focus-visible { outline: none; }
 .tnum { font-variant-numeric: tabular-nums; }
 
-@keyframes spin-slow { to { transform: rotate(360deg); } }
-.animate-spin-slow { animation: spin-slow 14s linear infinite; }
+/* Workspace "Back to site": outlined pill on the Ink sidebar and mobile bar. */
+.back-pill {
+  display: inline-flex; height: 40px; align-items: center; justify-content: center; gap: 8px;
+  border: 1px solid rgb(185 228 232 / 0.4); border-radius: 9999px; background: transparent;
+  padding: 0 16px; font-size: 14px; font-weight: 500; line-height: 1; white-space: nowrap; color: var(--paper);
+  transition: background-color 200ms ease, color 200ms ease, border-color 200ms ease;
+}
+@media (hover: hover) {
+  .back-pill:hover { background: var(--mist); border-color: var(--mist); color: var(--ink); }
+}
+.ws .back-pill:focus-visible { outline: 2px solid var(--paper); outline-offset: 3px; border-radius: 9999px; }
 
 /* Marquee */
 @keyframes marquee-x { to { transform: translateX(calc(-50% - var(--gap) / 2)); } }
 @keyframes marquee-y { to { transform: translateY(calc(-50% - var(--gap) / 2)); } }
 
 @media (prefers-reduced-motion: reduce) {
-  .animate-spin-slow { animation: none; }
   [data-reveal], .js [data-reveal=""] { opacity: 1 !important; transform: none !important; transition: none !important; --shown: 1 !important; }
   .grow-x, .grow-y, .grow-y-up, .ring-draw { transition: none !important; }
   html { scroll-behavior: auto; }
