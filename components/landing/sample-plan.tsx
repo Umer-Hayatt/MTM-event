@@ -17,17 +17,18 @@ export function SamplePlan() {
     <section id="sample-plan" aria-labelledby="sample-title" className="scroll-mt-20 py-24 md:py-32">
       <div className={wrap}>
         <Reveal><Pill tone="mist">Sample plan</Pill></Reveal>
-        <div className="sample-head mt-5 grid gap-6 lg:grid-cols-[minmax(0,calc(var(--h2)*11))_minmax(0,420px)] lg:items-end lg:justify-start lg:gap-x-[4.5rem]">
+        <div className="sample-head mt-5 grid gap-6 lg:grid-cols-[minmax(0,calc(var(--h2)*11))_minmax(0,420px)] lg:items-start lg:justify-start lg:gap-x-[4.5rem] xl:grid-cols-[minmax(0,calc(var(--h2)*11))_minmax(0,460px)]">
           <Reveal delay={100}>
             <h2 id="sample-title" style={{ fontSize: "var(--h2)" }} className="font-serif font-bold leading-[1.02] tracking-[-0.02em] text-ink">
               What a finished plan looks like.
             </h2>
           </Reveal>
-          <div className="lg:justify-self-end lg:pb-[calc(var(--h2)*0.167)]">
+          {/* From 1024px the right block is pushed down by --lead-offset (globals.css) so its x-height line meets the heading's first-line x-height line. */}
+          <div className="lg:mt-[var(--lead-offset)]">
             <Reveal delay={220}>
-              <p className="max-w-[420px] text-base leading-snug text-ink">Budget, schedule and checks, all built from eight sample messages.</p>
+              <p className="max-w-[460px] text-balance text-[length:var(--lead)] font-normal leading-[1.4] text-ink">Budget, schedule and checks, all built from eight sample messages.</p>
             </Reveal>
-            <Reveal delay={320} className="mt-3">
+            <Reveal delay={320} className="mt-6">
               <Link href="/app" className="btn-lift inline-flex items-center rounded-full bg-teal px-7 py-3 text-base font-semibold text-white hover:bg-ink">
                 Try it with your own messages
               </Link>
